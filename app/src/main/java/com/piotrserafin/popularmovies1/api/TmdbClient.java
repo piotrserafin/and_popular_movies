@@ -21,7 +21,6 @@ public class TmdbClient {
 
     private static TmdbClient instance = null;
 
-    private Retrofit retrofit;
     private TmdbClient.Api tmdbApi;
 
     public interface Api {
@@ -31,7 +30,7 @@ public class TmdbClient {
 
     private TmdbClient() {
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(new OkHttpClient())
