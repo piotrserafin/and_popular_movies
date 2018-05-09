@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.debugTv)
     TextView debutTv;
 
-    private TmdbStrategy sortOrder = TmdbStrategy.MOST_POPULAR;
+    private TmdbClient.Strategy sortOrder = TmdbClient.Strategy.MOST_POPULAR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +74,13 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.action_popularity: {
-                sortOrder = TmdbStrategy.MOST_POPULAR;
+                sortOrder = TmdbClient.Strategy.MOST_POPULAR;
                 fetchTmdbData();
                 return true;
             }
 
             case R.id.action_topRated: {
-                sortOrder = TmdbStrategy.TOP_RATED;
+                sortOrder = TmdbClient.Strategy.TOP_RATED;
                 fetchTmdbData();
                 return true;
             }
@@ -93,8 +93,8 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean checkIfOptionChanged(MenuItem item) {
         return ((item.getItemId() == R.id.action_popularity &&
-                sortOrder == TmdbStrategy.MOST_POPULAR) ||
+                sortOrder == TmdbClient.Strategy.MOST_POPULAR) ||
                 (item.getItemId() == R.id.action_topRated &&
-                        sortOrder == TmdbStrategy.TOP_RATED));
+                        sortOrder == TmdbClient.Strategy.TOP_RATED));
     }
 }

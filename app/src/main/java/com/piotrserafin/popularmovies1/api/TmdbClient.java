@@ -33,6 +33,25 @@ public class TmdbClient {
         Call<Movies> getTopRated(@Query("api_key") String apiKey);
     }
 
+    public enum Strategy {
+
+        MOST_POPULAR {
+            @Override
+            Call<Movies> execute() {
+                return getInstance().getPopular();
+            }
+        },
+
+        TOP_RATED {
+            @Override
+            Call<Movies> execute() {
+                return getInstance().getTopRated();
+            }
+        };
+
+        abstract Call<Movies> execute();
+    }
+
     private TmdbClient() {
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -51,7 +70,7 @@ public class TmdbClient {
         return instance;
     }
 
-    public Call<Movies> perform(TmdbStrategy strategy) {
+    public Call<Movies> perform(Strategy strategy) {
         return strategy.execute();
     }
 
