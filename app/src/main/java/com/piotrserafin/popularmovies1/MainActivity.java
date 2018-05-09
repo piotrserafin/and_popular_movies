@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        Call<Movies> moviesCall = TmdbClient.getInstance().getMovies();
+        Call<Movies> moviesCall = TmdbClient.getInstance().getPopular();
         Callback<Movies> moviesCallback = new Callback<Movies>() {
             @Override
             public void onResponse(Call<Movies> moviesCall, Response<Movies> response) {

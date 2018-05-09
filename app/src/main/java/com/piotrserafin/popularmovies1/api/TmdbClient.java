@@ -16,8 +16,9 @@ import retrofit2.http.Query;
 
 public class TmdbClient {
 
-    private final static String BASE_URL = "http://api.themoviedb.org/";
+    private static final String TAG = TmdbClient.class.getSimpleName();
 
+    private static final String BASE_URL = "http://api.themoviedb.org/";
     private static final String API_KEY = BuildConfig.API_KEY;
 
     private static TmdbClient instance = null;
@@ -25,8 +26,11 @@ public class TmdbClient {
     private TmdbClient.Api api;
 
     public interface Api {
-        @GET("/3/discover/movie")
-        Call<Movies> getMovies(@Query("api_key") String apiKey);
+        @GET("/3/movie/popular")
+        Call<Movies> getPopular(@Query("api_key") String apiKey);
+
+        @GET("/3/movie/top_rated")
+        Call<Movies> getTopRated(@Query("api_key") String apiKey);
     }
 
     private TmdbClient() {
@@ -47,7 +51,11 @@ public class TmdbClient {
         return instance;
     }
 
-    public Call<Movies> getMovies() {
-        return api.getMovies(API_KEY);
+    public Call<Movies> getPopular() {
+        return api.getPopular(API_KEY);
+    }
+
+    public Call<Movies> getTopRated() {
+        return api.getTopRated(API_KEY);
     }
 }
