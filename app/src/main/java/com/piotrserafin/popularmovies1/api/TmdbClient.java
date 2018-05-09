@@ -51,6 +51,10 @@ public class TmdbClient {
         return instance;
     }
 
+    public Call<Movies> perform(TmdbStrategy strategy) {
+        return strategy.execute();
+    }
+
     public Call<Movies> getPopular() {
         return api.getPopular(API_KEY);
     }
