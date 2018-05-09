@@ -33,6 +33,7 @@ public class TmdbClient {
         Call<Movies> getTopRated(@Query("api_key") String apiKey);
     }
 
+    // Enum based strategy pattern for sort order selection
     public enum Strategy {
 
         MOST_POPULAR {
@@ -74,11 +75,11 @@ public class TmdbClient {
         return strategy.execute();
     }
 
-    public Call<Movies> getPopular() {
+    private Call<Movies> getPopular() {
         return api.getPopular(API_KEY);
     }
 
-    public Call<Movies> getTopRated() {
+    private Call<Movies> getTopRated() {
         return api.getTopRated(API_KEY);
     }
 }

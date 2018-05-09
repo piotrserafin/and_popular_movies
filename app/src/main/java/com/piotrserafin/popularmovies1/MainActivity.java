@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.piotrserafin.popularmovies1.api.TmdbClient;
-import com.piotrserafin.popularmovies1.api.TmdbStrategy;
 import com.piotrserafin.popularmovies1.model.Movie;
 import com.piotrserafin.popularmovies1.model.Movies;
 
@@ -46,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
                 }
                 List<Movie> movieList = response.body().getResults();
 
+                if(movieList.isEmpty()) {
+                    return;
+                }
+                
                 debutTv.setText("");
 
                 for(Movie movie : movieList) {
