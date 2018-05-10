@@ -71,7 +71,7 @@ public class TmdbClient {
         return instance;
     }
 
-    public Call<Movies> perform(Strategy strategy) {
+    public Call<Movies> fetch(Strategy strategy) {
         return strategy.execute();
     }
 
