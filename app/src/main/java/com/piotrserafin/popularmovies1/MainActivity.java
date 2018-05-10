@@ -1,13 +1,12 @@
 package com.piotrserafin.popularmovies1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
@@ -46,8 +45,10 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     @Override
-    public void onClick(View view) {
-        Log.d(TAG, "onClick");
+    public void onClick(Movie movie) {
+        Intent movieDetailsIntent = new Intent(MainActivity.this, DetailsActivity.class);
+        movieDetailsIntent.putExtra("Movie", movie);
+        startActivity(movieDetailsIntent);
     }
 
     private void fetchTmdbData() {

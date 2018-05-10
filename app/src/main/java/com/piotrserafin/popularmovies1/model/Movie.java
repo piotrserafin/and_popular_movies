@@ -1,5 +1,8 @@
 package com.piotrserafin.popularmovies1.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
@@ -8,7 +11,25 @@ import java.util.List;
  * Created by pserafin on 21.03.2018.
  */
 
-public class Movie {
+public class Movie implements Parcelable {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
+
+    Movie(Parcel in) {
+        this.title = in.readString();
+        this.posterPath = in.readString();
+        this.overview = in.readString();
+        this.releaseDate = in.readString();
+        this.voteAverage = in.readFloat();
+    }
 
     @SerializedName("poster_path")
     private String posterPath;
@@ -162,5 +183,19 @@ public class Movie {
 
     public void setVoteAverage(float voteAverage) {
         this.voteAverage = voteAverage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(posterPath);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeFloat(voteAverage);
     }
 }

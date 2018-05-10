@@ -3,7 +3,6 @@ package com.piotrserafin.popularmovies1;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterView
     private List<Movie> results;
 
     public interface MoviesAdapterOnClickHandler {
-        void onClick(View view);
+        void onClick(Movie movie);
     }
 
     public MoviesAdapter(Context context, MoviesAdapterOnClickHandler clickHandler) {
@@ -42,10 +41,10 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterView
     public void onBindViewHolder(@NonNull MoviesAdapterViewHolder holder, int position) {
 
         Movie movie = results.get(position);
-        
+
         Picasso.get()
                 .load(Utils.preparePosterImagePath(movie.getPosterPath()))
-                .placeholder(R.color.colorAccent)
+                .placeholder(R.color.colorPrimaryDark)
                 .into(holder.posterImage);
     }
 
@@ -74,7 +73,9 @@ class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterView
 
         @Override
         public void onClick(View view) {
-            Log.d("MoviesAdapterViewHolder", "onClick()");
+            int position = getAdapterPosition();
+            Movie movie = results.get(position);
+            clickHandler.onClick(movie);
         }
     }
 }
