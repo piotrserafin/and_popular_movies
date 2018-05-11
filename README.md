@@ -1,4 +1,4 @@
-Udacity Android Developer Nanodegree - Project 2
+Udacity Android Developer Nanodegree - Project 2 & 3
 
 The Movie Database API Key should be added to **gradle.properties** file
 
