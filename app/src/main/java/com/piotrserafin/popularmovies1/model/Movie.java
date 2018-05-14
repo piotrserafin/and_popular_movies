@@ -24,6 +24,7 @@ public class Movie implements Parcelable {
     };
 
     Movie(Parcel in) {
+        this.id = in.readLong();
         this.title = in.readString();
         this.posterPath = in.readString();
         this.overview = in.readString();
@@ -192,6 +193,7 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(title);
         dest.writeString(posterPath);
         dest.writeString(overview);

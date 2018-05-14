@@ -1,27 +1,33 @@
 package com.piotrserafin.popularmovies1.model;
 
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Created by pserafin on 24.03.2018.
- */
+public class Reviews {
 
-public class Movies {
+    @SerializedName("id")
+    private int id;
 
     @SerializedName("page")
     private int page;
 
     @SerializedName("results")
-    private List<Movie> results;
+    private List<Review> results;
 
     @SerializedName("total_pages")
     private int totalPages;
 
     @SerializedName("total_results")
     private int totalResults;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public int getPage() {
         return page;
@@ -31,11 +37,11 @@ public class Movies {
         this.page = page;
     }
 
-    public List<Movie> getResults() {
+    public List<Review> getResults() {
         return results;
     }
 
-    public void setResults(List<Movie> results) {
+    public void setResults(List<Review> results) {
         this.results = results;
     }
 

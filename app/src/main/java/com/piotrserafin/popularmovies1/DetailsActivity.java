@@ -3,17 +3,33 @@ package com.piotrserafin.popularmovies1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
+import com.piotrserafin.popularmovies1.model.Movies;
+import com.piotrserafin.popularmovies1.model.Review;
+import com.piotrserafin.popularmovies1.model.Reviews;
+import com.piotrserafin.popularmovies1.model.Video;
+import com.piotrserafin.popularmovies1.model.Videos;
 import com.piotrserafin.popularmovies1.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailsActivity extends AppCompatActivity {
+
+    public static final String TAG = DetailsActivity.class.getSimpleName();
+
+    private long movieId;
 
     @BindView(R.id.detail_img)
     ImageView posterImageView;
@@ -40,6 +56,8 @@ public class DetailsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("Movie");
 
+        movieId = movie.getId();
+
         String title = movie.getTitle();
         String posterPath = movie.getPosterPath();
         String overview = movie.getOverview();
@@ -56,5 +74,63 @@ public class DetailsActivity extends AppCompatActivity {
                 .load(Utils.preparePosterImagePath(posterPath))
                 .placeholder(R.color.colorPrimaryDark)
                 .into(posterImageView);
+
+        //TODO: Good place to use RxJava to chain multiple Retrofit requests
+        fetchVideos();
+        fetchReviews();
+    }
+
+    private void fetchVideos() {
+
+        Call<Videos> videosCall = TmdbClient.getInstance().getVideos(movieId);
+        Callback<Videos> videosCallback = new Callback<Videos>() {
+            @Override
+            public void onResponse(Call<Videos> videosCall, Response<Videos> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                List<Video> videos = response.body().getResults();
+
+                if(videos.isEmpty()) {
+                    return;
+                }
+
+                for(Video video : videos) {
+                    Log.d(TAG,  video.getType() + ": " + video.getKey());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Videos> videosCall, Throwable t) {
+            }
+        };
+        videosCall.enqueue(videosCallback);
+    }
+
+    private void fetchReviews() {
+
+        Call<Reviews> reviewsCall = TmdbClient.getInstance().getReviews(movieId);
+        Callback<Reviews> reviewsCallback = new Callback<Reviews>() {
+            @Override
+            public void onResponse(Call<Reviews> reviewsCall, Response<Reviews> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                List<Review> reviews = response.body().getResults();
+
+                if(reviews.isEmpty()) {
+                    return;
+                }
+
+                for(Review review : reviews) {
+                    Log.d(TAG, "Review: " + review.getContent());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Reviews> reviewsCall, Throwable t) {
+            }
+        };
+        reviewsCall.enqueue(reviewsCallback);
     }
 }
