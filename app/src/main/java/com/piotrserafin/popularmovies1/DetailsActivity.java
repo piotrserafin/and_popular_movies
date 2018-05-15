@@ -34,6 +34,9 @@ public class DetailsActivity extends AppCompatActivity
 
     private long movieId;
 
+    @BindView(R.id.backdrop_img)
+    ImageView backdropImageView;
+
     @BindView(R.id.detail_img)
     ImageView posterImageView;
 
@@ -68,6 +71,7 @@ public class DetailsActivity extends AppCompatActivity
 
         String title = movie.getTitle();
         String posterPath = movie.getPosterPath();
+        String backdropPath = movie.getBackdropPath();
         String overview = movie.getOverview();
         String releaseDate = movie.getReleaseDate();
         float voteAverage = movie.getVoteAverage();
@@ -82,11 +86,14 @@ public class DetailsActivity extends AppCompatActivity
         videoRecyclerView.setAdapter(videosAdapter);
 
         Picasso.get()
+                .load(Utils.prepareBackdropImagePath(backdropPath))
+                .placeholder(R.color.colorPrimaryDark)
+                .into(backdropImageView);
+
+        Picasso.get()
                 .load(Utils.preparePosterImagePath(posterPath))
                 .placeholder(R.color.colorPrimaryDark)
                 .into(posterImageView);
-
-
 
         //TODO: Good place to use RxJava to chain multiple Retrofit requests
         fetchVideos();
