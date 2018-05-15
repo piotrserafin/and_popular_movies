@@ -13,9 +13,11 @@
         android:layout_width="@dimen/video_list_icon"
         android:layout_height="@dimen/video_list_icon"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
+        android:src="@drawable/ic_video_list_play"
         tools:src="@drawable/ic_video_list_play" />
 
     <TextView
@@ -23,12 +25,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:fontFamily="sans-serif-light"
         android:textSize="@dimen/video_list_text_size"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/video_list_icon"
-        app:layout_constraintTop_toTopOf="@+id/guideline"
-        tools:text="Trailer 1" />
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

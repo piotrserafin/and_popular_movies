@@ -3,13 +3,14 @@ package com.piotrserafin.popularmovies1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
-import com.piotrserafin.popularmovies1.model.Movies;
 import com.piotrserafin.popularmovies1.model.Review;
 import com.piotrserafin.popularmovies1.model.Reviews;
 import com.piotrserafin.popularmovies1.model.Video;
@@ -25,7 +26,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity
+        implements VideosAdapter.VideosAdapterOnClickHandler {
 
     public static final String TAG = DetailsActivity.class.getSimpleName();
 
@@ -45,6 +47,11 @@ public class DetailsActivity extends AppCompatActivity {
 
     @BindView(R.id.overview)
     TextView overviewTextView;
+
+    @BindView(R.id.videos_list)
+    RecyclerView videoRecyclerView;
+
+    private VideosAdapter videosAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +76,16 @@ public class DetailsActivity extends AppCompatActivity {
         releaseDateTextView.setText(releaseDate);
         voteAverageTextView.setText(Float.toString(voteAverage) + getString(R.string.vote_average_max));
 
+        videoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        videosAdapter = new VideosAdapter(this, this);
+        videoRecyclerView.setAdapter(videosAdapter);
 
         Picasso.get()
                 .load(Utils.preparePosterImagePath(posterPath))
                 .placeholder(R.color.colorPrimaryDark)
                 .into(posterImageView);
+
+
 
         //TODO: Good place to use RxJava to chain multiple Retrofit requests
         fetchVideos();
@@ -94,6 +106,8 @@ public class DetailsActivity extends AppCompatActivity {
                 if(videos.isEmpty()) {
                     return;
                 }
+
+                videosAdapter.setVideosList(videos);
 
                 for(Video video : videos) {
                     Log.d(TAG,  video.getType() + ": " + video.getKey());
@@ -132,5 +146,10 @@ public class DetailsActivity extends AppCompatActivity {
             }
         };
         reviewsCall.enqueue(reviewsCallback);
+    }
+
+    @Override
+    public void onClick(Video video) {
+
     }
 }
