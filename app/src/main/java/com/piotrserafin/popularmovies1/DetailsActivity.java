@@ -1,6 +1,7 @@
 package com.piotrserafin.popularmovies1;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -150,6 +151,18 @@ public class DetailsActivity extends AppCompatActivity
 
     @Override
     public void onClick(Video video) {
+        playVideo(video.getKey());
+    }
 
+    public void playVideo(String key){
+
+        Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
+
+        // If there is no YT app, start in browser
+        if (youTubeIntent.resolveActivity(getPackageManager()) == null) {
+            youTubeIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Utils.prepareYoutubeUrl(key)));
+        }
+        startActivity(youTubeIntent);
     }
 }
