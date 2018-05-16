@@ -4,7 +4,7 @@ public class Utils {
 
     private static final String TMDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
     private static final String POSTER_SIZE = "w300";
-    private static final String BACKDROP_SIZE = "w1280";
+    private static final String BACKDROP_SIZE = "w780";
 
     private static final String YOUTUBE_BASE_URL = "http://www.youtube.com/watch?v=";
 
