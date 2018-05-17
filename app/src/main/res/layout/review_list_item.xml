@@ -16,8 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:textAlignment="gravity"
-        android:maxLines="2"
-        android:ellipsize="end"
         tools:text="Trailer 1" />
 
 </android.support.constraint.ConstraintLayout>
