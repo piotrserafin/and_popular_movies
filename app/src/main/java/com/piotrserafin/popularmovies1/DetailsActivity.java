@@ -54,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.overview)
     TextView overviewTextView;
 
-    @BindView(R.id.divider1)
+    @BindView(R.id.trailers_divider)
     View trailersDivider;
 
     @BindView(R.id.trailers_label)

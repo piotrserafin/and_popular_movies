@@ -109,7 +109,7 @@
             tools:text="As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain." />
 
         <View
-            android:id="@+id/divider1"
+            android:id="@+id/trailers_divider"
             style="@style/listDivider"
             android:layout_marginTop="8dp"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
@@ -124,7 +124,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/divider1"
+            app:layout_constraintTop_toBottomOf="@+id/trailers_divider"
             android:text="Trailers:" />
 
         <android.support.v7.widget.RecyclerView
@@ -138,12 +138,36 @@
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
             app:layout_constraintTop_toBottomOf="@+id/trailers_label" />
 
-        <!--<View-->
-        <!--android:id="@+id/divider"-->
-        <!--style="@style/listDivider"-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--app:layout_constraintTop_toBottomOf="@id/video_type"/>-->
+        <!--TODO: nasty hack with 0dp (partiall cover rv divider), remove last divider in decorator-->
+        <View
+            android:id="@+id/reviews_divider"
+            style="@style/listDivider"
+            android:layout_marginTop="0dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@id/videos_list"/>
 
+        <TextView
+            android:id="@+id/reviews_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintTop_toBottomOf="@+id/reviews_divider"
+            android:text="Reviews:" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reviews_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@+id/reviews_label" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
