@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1.model;
+package com.piotrserafin.popularmovies.model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

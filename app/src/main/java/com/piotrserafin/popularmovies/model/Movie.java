@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1.model;
+package com.piotrserafin.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;

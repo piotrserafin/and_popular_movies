@@ -1,9 +1,9 @@
-package com.piotrserafin.popularmovies1.api;
+package com.piotrserafin.popularmovies.api;
 
-import com.piotrserafin.popularmovies1.BuildConfig;
-import com.piotrserafin.popularmovies1.model.Movies;
-import com.piotrserafin.popularmovies1.model.Reviews;
-import com.piotrserafin.popularmovies1.model.Videos;
+import com.piotrserafin.popularmovies.BuildConfig;
+import com.piotrserafin.popularmovies.model.Movies;
+import com.piotrserafin.popularmovies.model.Reviews;
+import com.piotrserafin.popularmovies.model.Videos;
 
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;

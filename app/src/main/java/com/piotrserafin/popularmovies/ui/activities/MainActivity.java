@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1.ui.activities;
+package com.piotrserafin.popularmovies.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,11 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.piotrserafin.popularmovies1.R;
-import com.piotrserafin.popularmovies1.api.TmdbClient;
-import com.piotrserafin.popularmovies1.model.Movie;
-import com.piotrserafin.popularmovies1.model.Movies;
-import com.piotrserafin.popularmovies1.ui.adapters.MoviesAdapter;
+import com.piotrserafin.popularmovies.R;
+import com.piotrserafin.popularmovies.api.TmdbClient;
+import com.piotrserafin.popularmovies.model.Movie;
+import com.piotrserafin.popularmovies.model.Movies;
+import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1.ui.activities;
+package com.piotrserafin.popularmovies.ui.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -11,16 +11,16 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.piotrserafin.popularmovies1.R;
-import com.piotrserafin.popularmovies1.api.TmdbClient;
-import com.piotrserafin.popularmovies1.model.Movie;
-import com.piotrserafin.popularmovies1.model.Review;
-import com.piotrserafin.popularmovies1.model.Reviews;
-import com.piotrserafin.popularmovies1.model.Video;
-import com.piotrserafin.popularmovies1.model.Videos;
-import com.piotrserafin.popularmovies1.ui.adapters.ReviewsAdapter;
-import com.piotrserafin.popularmovies1.ui.adapters.VideosAdapter;
-import com.piotrserafin.popularmovies1.utils.Utils;
+import com.piotrserafin.popularmovies.R;
+import com.piotrserafin.popularmovies.api.TmdbClient;
+import com.piotrserafin.popularmovies.model.Movie;
+import com.piotrserafin.popularmovies.model.Review;
+import com.piotrserafin.popularmovies.model.Reviews;
+import com.piotrserafin.popularmovies.model.Video;
+import com.piotrserafin.popularmovies.model.Videos;
+import com.piotrserafin.popularmovies.ui.adapters.ReviewsAdapter;
+import com.piotrserafin.popularmovies.ui.adapters.VideosAdapter;
+import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

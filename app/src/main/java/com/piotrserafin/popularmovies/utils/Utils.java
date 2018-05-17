@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1.utils;
+package com.piotrserafin.popularmovies.utils;
 
 public class Utils {
 

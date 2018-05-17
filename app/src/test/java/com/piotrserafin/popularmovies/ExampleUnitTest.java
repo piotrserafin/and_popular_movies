@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1;
+package com.piotrserafin.popularmovies;
 
 import org.junit.Test;
 
