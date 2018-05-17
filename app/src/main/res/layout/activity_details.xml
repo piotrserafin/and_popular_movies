@@ -2,85 +2,147 @@
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <android.support.constraint.ConstraintLayout
-        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".DetailsActivity">
 
-        <ImageView
-            android:id="@+id/detail_img"
-            android:layout_width="0dp"
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical_start"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:contentDescription="@string/poster_description"
-            android:scaleType="fitCenter"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/guideline_vertical_start_offset" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline_vertical_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/guideline_vertical_end_offset" />
+
+
+        <ImageView
+            android:id="@+id/backdrop_img"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/details_backdrop_height"
+            android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@drawable/sample_backdrop_1280" />
+
+        <ImageView
+            android:id="@+id/detail_img"
+            android:layout_width="@dimen/details_poster_width"
+            android:layout_height="@dimen/details_poster_height"
+            android:layout_marginTop="8dp"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/poster_description"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="@+id/backdrop_img"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintTop_toBottomOf="@+id/backdrop_img"
+            tools:src="@drawable/sample_poster_w185" />
 
         <TextView
             android:id="@+id/movie_title"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_height="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:autoSizeMaxTextSize="24sp"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeStepGranularity="2sp"
+            android:autoSizeTextType="uniform"
+            android:textSize="18sp"
             android:textStyle="bold"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/detail_img"/>
+            app:layout_constraintBottom_toTopOf="@+id/details_barrier"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
+            app:layout_constraintStart_toEndOf="@+id/detail_img"
+            app:layout_constraintTop_toBottomOf="@+id/backdrop_img"
+            tools:text="@tools:sample/lorem" />
+
+        <android.support.constraint.Barrier
+            android:id="@+id/details_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="detail_img, movie_title" />
 
         <TextView
             android:id="@+id/release_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/movie_title"/>
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@+id/details_barrier"
+            tools:text="@tools:sample/date/ddmmyy" />
+
 
         <TextView
             android:id="@+id/vote_average"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/release_date"/>
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@+id/release_date"
+            tools:text="@tools:sample/lorem" />
 
         <TextView
             android:id="@+id/overview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/vote_average"/>
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@+id/vote_average"
+            tools:text="As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain." />
+
+        <View
+            android:id="@+id/divider1"
+            style="@style/listDivider"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@id/overview"/>
+
+        <TextView
+            android:id="@+id/trailers_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintTop_toBottomOf="@+id/divider1"
+            android:text="Trailers:" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/videos_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:nestedScrollingEnabled="false"
+            android:scrollbars="none"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintTop_toBottomOf="@+id/trailers_label" />
+
+        <!--<View-->
+        <!--android:id="@+id/divider"-->
+        <!--style="@style/listDivider"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--app:layout_constraintTop_toBottomOf="@id/video_type"/>-->
 
 
     </android.support.constraint.ConstraintLayout>

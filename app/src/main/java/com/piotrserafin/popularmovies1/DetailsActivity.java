@@ -1,15 +1,19 @@
 package com.piotrserafin.popularmovies1;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
-import com.piotrserafin.popularmovies1.model.Movies;
 import com.piotrserafin.popularmovies1.model.Review;
 import com.piotrserafin.popularmovies1.model.Reviews;
 import com.piotrserafin.popularmovies1.model.Video;
@@ -25,11 +29,15 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity
+        implements VideosAdapter.VideosAdapterOnClickHandler {
 
     public static final String TAG = DetailsActivity.class.getSimpleName();
 
     private long movieId;
+
+    @BindView(R.id.backdrop_img)
+    ImageView backdropImageView;
 
     @BindView(R.id.detail_img)
     ImageView posterImageView;
@@ -46,6 +54,17 @@ public class DetailsActivity extends AppCompatActivity {
     @BindView(R.id.overview)
     TextView overviewTextView;
 
+    @BindView(R.id.divider1)
+    View trailersDivider;
+
+    @BindView(R.id.trailers_label)
+    TextView trailersLabelTextView;
+
+    @BindView(R.id.videos_list)
+    RecyclerView videoRecyclerView;
+
+    private VideosAdapter videosAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,15 +79,32 @@ public class DetailsActivity extends AppCompatActivity {
 
         String title = movie.getTitle();
         String posterPath = movie.getPosterPath();
+        String backdropPath = movie.getBackdropPath();
         String overview = movie.getOverview();
         String releaseDate = movie.getReleaseDate();
         float voteAverage = movie.getVoteAverage();
+
+        trailersLabelTextView.setVisibility(View.INVISIBLE);
+        trailersDivider.setVisibility(View.INVISIBLE);
 
         movieTitleTextView.setText(title);
         overviewTextView.setText(overview);
         releaseDateTextView.setText(releaseDate);
         voteAverageTextView.setText(Float.toString(voteAverage) + getString(R.string.vote_average_max));
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
+
+        videoRecyclerView.setLayoutManager(linearLayoutManager);
+        videoRecyclerView.addItemDecoration(itemDecoration);
+
+        videosAdapter = new VideosAdapter(this, this);
+        videoRecyclerView.setAdapter(videosAdapter);
+
+        Picasso.get()
+                .load(Utils.prepareBackdropImagePath(backdropPath))
+                .placeholder(R.color.colorPrimaryDark)
+                .into(backdropImageView);
 
         Picasso.get()
                 .load(Utils.preparePosterImagePath(posterPath))
@@ -94,6 +130,10 @@ public class DetailsActivity extends AppCompatActivity {
                 if(videos.isEmpty()) {
                     return;
                 }
+
+                trailersDivider.setVisibility(View.VISIBLE);
+                trailersLabelTextView.setVisibility(View.VISIBLE);
+                videosAdapter.setVideosList(videos);
 
                 for(Video video : videos) {
                     Log.d(TAG,  video.getType() + ": " + video.getKey());
@@ -132,5 +172,22 @@ public class DetailsActivity extends AppCompatActivity {
             }
         };
         reviewsCall.enqueue(reviewsCallback);
+    }
+
+    @Override
+    public void onClick(Video video) {
+        playVideo(video.getKey());
+    }
+
+    public void playVideo(String key){
+
+        Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
+
+        // If there is no YT app, start in browser
+        if (youTubeIntent.resolveActivity(getPackageManager()) == null) {
+            youTubeIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse(Utils.prepareYoutubeUrl(key)));
+        }
+        startActivity(youTubeIntent);
     }
 }
