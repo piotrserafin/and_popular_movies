@@ -54,6 +54,9 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.overview)
     TextView overviewTextView;
 
+    @BindView(R.id.divider1)
+    View trailersDivider;
+
     @BindView(R.id.trailers_label)
     TextView trailersLabelTextView;
 
@@ -82,6 +85,7 @@ public class DetailsActivity extends AppCompatActivity
         float voteAverage = movie.getVoteAverage();
 
         trailersLabelTextView.setVisibility(View.INVISIBLE);
+        trailersDivider.setVisibility(View.INVISIBLE);
 
         movieTitleTextView.setText(title);
         overviewTextView.setText(overview);
@@ -127,6 +131,7 @@ public class DetailsActivity extends AppCompatActivity
                     return;
                 }
 
+                trailersDivider.setVisibility(View.VISIBLE);
                 trailersLabelTextView.setVisibility(View.VISIBLE);
                 videosAdapter.setVideosList(videos);
 
