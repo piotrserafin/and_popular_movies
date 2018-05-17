@@ -5,13 +5,14 @@ import com.piotrserafin.popularmovies1.model.Movies;
 import com.piotrserafin.popularmovies1.model.Reviews;
 import com.piotrserafin.popularmovies1.model.Videos;
 
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by pserafin on 21.03.2018.
@@ -30,16 +31,16 @@ public class TmdbClient {
 
     public interface Api {
         @GET("/3/movie/popular")
-        Call<Movies> getPopular(@Query("api_key") String apiKey);
+        Call<Movies> getPopular();
 
         @GET("/3/movie/top_rated")
-        Call<Movies> getTopRated(@Query("api_key") String apiKey);
+        Call<Movies> getTopRated();
 
         @GET("/3/movie/{movie_id}/videos")
-        Call<Videos> getVideos(@Path("movie_id") long movieId, @Query("api_key") String apiKey);
+        Call<Videos> getVideos(@Path("movie_id") long movieId);
 
         @GET("/3/movie/{movie_id}/reviews")
-        Call<Reviews> getReviews(@Path("movie_id") long movieId, @Query("api_key") String apiKey);
+        Call<Reviews> getReviews(@Path("movie_id") long movieId);
     }
 
     // Enum based strategy pattern for sort order selection
@@ -64,10 +65,29 @@ public class TmdbClient {
 
     private TmdbClient() {
 
+        OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
+
+        httpClientBuilder.addInterceptor(chain -> {
+            Request interceptedRequest = chain.request();
+            HttpUrl url = interceptedRequest.url();
+
+            HttpUrl modifiedUrl = url.newBuilder()
+                    .addQueryParameter("api_key", API_KEY)
+                    .build();
+
+            Request request = interceptedRequest
+                    .newBuilder()
+                    .url(modifiedUrl)
+                    .build();
+
+            return chain.proceed(request);
+        });
+
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
-                .client(new OkHttpClient())
+                .client(httpClientBuilder.build())
                 .build();
 
         api = retrofit.create(TmdbClient.Api.class);
@@ -80,10 +100,10 @@ public class TmdbClient {
         return instance;
     }
 
-    public Call<Videos> getVideos(long movieId) { return api.getVideos(movieId, API_KEY); }
+    public Call<Videos> getVideos(long movieId) { return api.getVideos(movieId); }
 
     public Call<Reviews> getReviews(long movieId) {
-        return api.getReviews(movieId, API_KEY);
+        return api.getReviews(movieId);
     }
 
     public Call<Movies> fetch(Strategy strategy) {
@@ -91,10 +111,10 @@ public class TmdbClient {
     }
 
     private Call<Movies> getPopular() {
-        return api.getPopular(API_KEY);
+        return api.getPopular();
     }
 
     private Call<Movies> getTopRated() {
-        return api.getTopRated(API_KEY);
+        return api.getTopRated();
     }
 }
