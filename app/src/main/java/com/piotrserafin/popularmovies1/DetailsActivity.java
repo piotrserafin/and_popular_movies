@@ -4,9 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -52,6 +54,9 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.overview)
     TextView overviewTextView;
 
+    @BindView(R.id.trailers_label)
+    TextView trailersLabelTextView;
+
     @BindView(R.id.videos_list)
     RecyclerView videoRecyclerView;
 
@@ -76,12 +81,19 @@ public class DetailsActivity extends AppCompatActivity
         String releaseDate = movie.getReleaseDate();
         float voteAverage = movie.getVoteAverage();
 
+        trailersLabelTextView.setVisibility(View.INVISIBLE);
+
         movieTitleTextView.setText(title);
         overviewTextView.setText(overview);
         releaseDateTextView.setText(releaseDate);
         voteAverageTextView.setText(Float.toString(voteAverage) + getString(R.string.vote_average_max));
 
-        videoRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
+
+        videoRecyclerView.setLayoutManager(linearLayoutManager);
+        videoRecyclerView.addItemDecoration(itemDecoration);
+
         videosAdapter = new VideosAdapter(this, this);
         videoRecyclerView.setAdapter(videosAdapter);
 
@@ -115,6 +127,7 @@ public class DetailsActivity extends AppCompatActivity
                     return;
                 }
 
+                trailersLabelTextView.setVisibility(View.VISIBLE);
                 videosAdapter.setVideosList(videos);
 
                 for(Video video : videos) {

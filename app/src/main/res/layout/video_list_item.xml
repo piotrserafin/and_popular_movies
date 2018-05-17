@@ -12,7 +12,7 @@
         android:id="@+id/video_list_icon"
         android:layout_width="@dimen/video_list_icon"
         android:layout_height="@dimen/video_list_icon"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
@@ -27,15 +27,10 @@
         android:fontFamily="sans-serif-light"
         android:textSize="@dimen/video_list_text_size"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toBottomOf="@+id/guideline"
         app:layout_constraintLeft_toRightOf="@+id/video_list_icon"
-        app:layout_constraintTop_toTopOf="@+id/guideline" />
-
-    <View
-        android:id="@+id/divider"
-        style="@style/listDivider"
-        android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/video_type"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        tools:text="Trailer 1"/>
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"
