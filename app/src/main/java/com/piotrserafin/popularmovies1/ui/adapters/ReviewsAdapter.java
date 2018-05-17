@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1;
+package com.piotrserafin.popularmovies1.ui.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.piotrserafin.popularmovies1.R;
 import com.piotrserafin.popularmovies1.model.Review;
 
 import java.util.ArrayList;

@@ -9,7 +9,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:context=".DetailsActivity">
+        tools:context=".ui.activities.DetailsActivity">
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_start"

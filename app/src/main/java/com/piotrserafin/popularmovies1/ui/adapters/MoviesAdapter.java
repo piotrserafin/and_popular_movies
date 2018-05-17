@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1;
+package com.piotrserafin.popularmovies1.ui.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.piotrserafin.popularmovies1.R;
 import com.piotrserafin.popularmovies1.model.Movie;
 import com.piotrserafin.popularmovies1.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -15,7 +16,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
     private final Context context;
     final private MoviesAdapterOnClickHandler clickHandler;

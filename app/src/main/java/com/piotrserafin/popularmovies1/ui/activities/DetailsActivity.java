@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1;
+package com.piotrserafin.popularmovies1.ui.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -7,17 +7,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.piotrserafin.popularmovies1.R;
 import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
 import com.piotrserafin.popularmovies1.model.Review;
 import com.piotrserafin.popularmovies1.model.Reviews;
 import com.piotrserafin.popularmovies1.model.Video;
 import com.piotrserafin.popularmovies1.model.Videos;
+import com.piotrserafin.popularmovies1.ui.adapters.ReviewsAdapter;
+import com.piotrserafin.popularmovies1.ui.adapters.VideosAdapter;
 import com.piotrserafin.popularmovies1.utils.Utils;
 import com.squareup.picasso.Picasso;
 

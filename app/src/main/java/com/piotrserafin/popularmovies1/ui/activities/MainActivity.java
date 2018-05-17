@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies1;
+package com.piotrserafin.popularmovies1.ui.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.piotrserafin.popularmovies1.R;
 import com.piotrserafin.popularmovies1.api.TmdbClient;
 import com.piotrserafin.popularmovies1.model.Movie;
 import com.piotrserafin.popularmovies1.model.Movies;
+import com.piotrserafin.popularmovies1.ui.adapters.MoviesAdapter;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler{
+public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
