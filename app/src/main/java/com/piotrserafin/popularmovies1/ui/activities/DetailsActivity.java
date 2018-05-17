@@ -84,6 +84,8 @@ public class DetailsActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
+        
+
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("Movie");
 

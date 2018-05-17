@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this, this);
         moviesRecyclerView.setAdapter(moviesAdapter);
 
-        fetchTmdbData();
+        fetchMovies();
     }
 
     @Override
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         startActivity(movieDetailsIntent);
     }
 
-    private void fetchTmdbData() {
+    private void fetchMovies() {
 
         Call<Movies> moviesCall = TmdbClient.getInstance().fetch(sortOrder);
         Callback<Movies> moviesCallback = new Callback<Movies>() {
@@ -101,14 +101,14 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
             case R.id.action_popularity: {
                 sortOrder = TmdbClient.Strategy.MOST_POPULAR;
-                fetchTmdbData();
+                fetchMovies();
                 item.setChecked(true);
                 return true;
             }
 
             case R.id.action_topRated: {
                 sortOrder = TmdbClient.Strategy.TOP_RATED;
-                fetchTmdbData();
+                fetchMovies();
                 item.setChecked(true);
                 return true;
             }
