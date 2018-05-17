@@ -166,10 +166,6 @@ public class DetailsActivity extends AppCompatActivity
                 videosDivider.setVisibility(View.VISIBLE);
                 videosLabelTextView.setVisibility(View.VISIBLE);
                 videosAdapter.setVideosList(videos);
-
-                for(Video video : videos) {
-                    Log.d(TAG,  video.getType() + ": " + video.getKey());
-                }
             }
 
             @Override
