@@ -6,6 +6,7 @@
     <dimen name="details_poster_height">150dp</dimen>
     <dimen name="video_list_icon">48dp</dimen>
     <dimen name="video_list_text_size">16sp</dimen>
+    <dimen name="review_list_text_size">16sp</dimen>
 
     <dimen name="guideline_vertical_start_offset">16dp</dimen>
     <dimen name="guideline_vertical_end_offset">16dp</dimen>

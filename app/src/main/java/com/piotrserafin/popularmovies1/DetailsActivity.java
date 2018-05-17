@@ -54,16 +54,26 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.overview)
     TextView overviewTextView;
 
-    @BindView(R.id.divider1)
-    View trailersDivider;
+    @BindView(R.id.videos_divider)
+    View videosDivider;
 
-    @BindView(R.id.trailers_label)
-    TextView trailersLabelTextView;
+    @BindView(R.id.videos_label)
+    TextView videosLabelTextView;
 
     @BindView(R.id.videos_list)
-    RecyclerView videoRecyclerView;
+    RecyclerView videosRecyclerView;
+
+    @BindView(R.id.reviews_divider)
+    View reviewsDivider;
+
+    @BindView(R.id.reviews_label)
+    TextView reviewsLabelTextView;
+
+    @BindView(R.id.reviews_list)
+    RecyclerView reviewsRecyclerView;
 
     private VideosAdapter videosAdapter;
+    private ReviewsAdapter reviewsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +87,16 @@ public class DetailsActivity extends AppCompatActivity
 
         movieId = movie.getId();
 
+        populateUi(movie);
+        createVideosList();
+        createReviewsList();
+
+        //TODO: Good place to use RxJava to chain multiple Retrofit requests
+        fetchVideos();
+        fetchReviews();
+    }
+
+    private void populateUi(Movie movie) {
         String title = movie.getTitle();
         String posterPath = movie.getPosterPath();
         String backdropPath = movie.getBackdropPath();
@@ -84,22 +104,16 @@ public class DetailsActivity extends AppCompatActivity
         String releaseDate = movie.getReleaseDate();
         float voteAverage = movie.getVoteAverage();
 
-        trailersLabelTextView.setVisibility(View.INVISIBLE);
-        trailersDivider.setVisibility(View.INVISIBLE);
+        videosLabelTextView.setVisibility(View.INVISIBLE);
+        videosDivider.setVisibility(View.INVISIBLE);
+
+        reviewsDivider.setVisibility(View.INVISIBLE);
+        reviewsLabelTextView.setVisibility(View.INVISIBLE);
 
         movieTitleTextView.setText(title);
         overviewTextView.setText(overview);
         releaseDateTextView.setText(releaseDate);
         voteAverageTextView.setText(Float.toString(voteAverage) + getString(R.string.vote_average_max));
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
-
-        videoRecyclerView.setLayoutManager(linearLayoutManager);
-        videoRecyclerView.addItemDecoration(itemDecoration);
-
-        videosAdapter = new VideosAdapter(this, this);
-        videoRecyclerView.setAdapter(videosAdapter);
 
         Picasso.get()
                 .load(Utils.prepareBackdropImagePath(backdropPath))
@@ -110,10 +124,28 @@ public class DetailsActivity extends AppCompatActivity
                 .load(Utils.preparePosterImagePath(posterPath))
                 .placeholder(R.color.colorPrimaryDark)
                 .into(posterImageView);
+    }
 
-        //TODO: Good place to use RxJava to chain multiple Retrofit requests
-        fetchVideos();
-        fetchReviews();
+    private void createVideosList() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
+
+        videosRecyclerView.setLayoutManager(linearLayoutManager);
+        videosRecyclerView.addItemDecoration(itemDecoration);
+
+        videosAdapter = new VideosAdapter(this, this);
+        videosRecyclerView.setAdapter(videosAdapter);
+    }
+
+    private void createReviewsList() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, linearLayoutManager.getOrientation());
+
+        reviewsRecyclerView.setLayoutManager(linearLayoutManager);
+        reviewsRecyclerView.addItemDecoration(itemDecoration);
+
+        reviewsAdapter = new ReviewsAdapter(this);
+        reviewsRecyclerView.setAdapter(reviewsAdapter);
     }
 
     private void fetchVideos() {
@@ -131,8 +163,8 @@ public class DetailsActivity extends AppCompatActivity
                     return;
                 }
 
-                trailersDivider.setVisibility(View.VISIBLE);
-                trailersLabelTextView.setVisibility(View.VISIBLE);
+                videosDivider.setVisibility(View.VISIBLE);
+                videosLabelTextView.setVisibility(View.VISIBLE);
                 videosAdapter.setVideosList(videos);
 
                 for(Video video : videos) {
@@ -162,9 +194,9 @@ public class DetailsActivity extends AppCompatActivity
                     return;
                 }
 
-                for(Review review : reviews) {
-                    Log.d(TAG, "Review: " + review.getContent());
-                }
+                reviewsDivider.setVisibility(View.VISIBLE);
+                reviewsLabelTextView.setVisibility(View.VISIBLE);
+                reviewsAdapter.setReviewsList(reviews);
             }
 
             @Override
