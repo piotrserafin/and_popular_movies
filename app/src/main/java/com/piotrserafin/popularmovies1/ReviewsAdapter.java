@@ -13,6 +13,9 @@ import com.piotrserafin.popularmovies1.model.Review;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsAdapterViewHolder> {
 
     private final Context context;
@@ -31,7 +34,9 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
 
     @Override
     public void onBindViewHolder(@NonNull ReviewsAdapterViewHolder holder, int position) {
-        holder.review.setText(results.get(position).getContent());
+        Review review = results.get(position);
+        holder.reviewAuthor.setText(review.getAuthor());
+        holder.reviewContent.setText(review.getContent());
     }
 
     @Override
@@ -47,11 +52,15 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
 
     class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder {
 
-        final TextView review;
+        @BindView(R.id.review_author)
+        TextView reviewAuthor;
+
+        @BindView(R.id.review_content)
+        TextView reviewContent;
 
         ReviewsAdapterViewHolder(View view) {
             super(view);
-            review = view.findViewById(R.id.review);
+            ButterKnife.bind(this, view);
         }
 
     }
