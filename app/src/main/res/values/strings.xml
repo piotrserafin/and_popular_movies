@@ -8,6 +8,8 @@
 
     <string name="action_popularity">Most Popular</string>
     <string name="action_topRated">Highest Rated</string>
+    <string name="action_favorites">Favorites</string>
+
     <string name="poster_description">Movie Poster</string>
 
     <string name="vote_average_max">/10.0</string>

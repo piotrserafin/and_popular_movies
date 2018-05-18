@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
@@ -143,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             case R.id.action_topRated: {
                 sortType = MovieSortType.TOP_RATED;
                 commandFactory.execute(sortType);
+                item.setChecked(true);
+                return true;
+            }
+
+            case R.id.action_favorites: {
                 item.setChecked(true);
                 return true;
             }
