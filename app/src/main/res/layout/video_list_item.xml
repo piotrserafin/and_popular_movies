@@ -15,8 +15,8 @@
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline"
-        android:src="@drawable/ic_video_list_play"
-        tools:src="@drawable/ic_video_list_play" />
+        android:src="@drawable/ic_baseline_play_circle_filled_24px"
+        tools:src="@drawable/ic_baseline_play_circle_filled_24px" />
 
     <TextView
         android:id="@+id/video_type"
