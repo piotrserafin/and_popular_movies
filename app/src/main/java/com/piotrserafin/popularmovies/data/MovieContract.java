@@ -1,5 +1,6 @@
 package com.piotrserafin.popularmovies.data;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -23,6 +24,9 @@ public class MovieContract {
                 .appendPath(PATH_MOVIE)
                 .build();
 
+        public static final String CONTENT_TYPE =
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MOVIE;
+
         public static final String TABLE_NAME = "movie";
         public static final String COLUMN_MOVIE_ID= "movie_id";
         public static final String COLUMN_TITLE = "title";
@@ -35,5 +39,23 @@ public class MovieContract {
         public static Uri buildMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
+
+        public static final String[] MOVIE_COLUMNS_PROJECTION = {
+                COLUMN_MOVIE_ID,
+                COLUMN_TITLE,
+                COLUMN_POSTER_PATH,
+                COLUMN_BACKDROP_PATH,
+                COLUMN_VOTE_AVG,
+                COLUMN_RELEASE_DATE,
+                COLUMN_OVERVIEW
+        };
+
+        public static final int INDEX_MOVIE_ID = 0;
+        public static final int INDEX_TITLE = 1;
+        public static final int INDEX_POSTER_PATH = 2;
+        public static final int INDEX_BACKDROP_PATH = 3;
+        public static final int INDEX_VOTE_AVG = 4;
+        public static final int INDEX_RELEASE_DATE = 5;
+        public static final int INDEX_OVERVIEW = 6;
     }
 }

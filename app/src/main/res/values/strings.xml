@@ -4,8 +4,11 @@
     <string name="main_acitvity_name">Movies</string>
     <string name="details_acitvity_name">Movie Details</string>
 
+    <string name="content_authority">com.piotrserafin.popularmovies</string>
+
     <string name="action_popularity">Most Popular</string>
     <string name="action_topRated">Highest Rated</string>
     <string name="poster_description">Movie Poster</string>
+
     <string name="vote_average_max">/10.0</string>
 </resources>
