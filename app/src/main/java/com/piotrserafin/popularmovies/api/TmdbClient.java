@@ -43,26 +43,6 @@ public class TmdbClient {
         Call<Reviews> getReviews(@Path("movie_id") long movieId);
     }
 
-    // Enum based strategy pattern for sort order selection
-    public enum Strategy {
-
-        MOST_POPULAR {
-            @Override
-            Call<Movies> execute() {
-                return getInstance().getPopular();
-            }
-        },
-
-        TOP_RATED {
-            @Override
-            Call<Movies> execute() {
-                return getInstance().getTopRated();
-            }
-        };
-
-        abstract Call<Movies> execute();
-    }
-
     private TmdbClient() {
 
         OkHttpClient.Builder httpClientBuilder = new OkHttpClient.Builder();
@@ -106,15 +86,11 @@ public class TmdbClient {
         return api.getReviews(movieId);
     }
 
-    public Call<Movies> fetch(Strategy strategy) {
-        return strategy.execute();
-    }
-
-    private Call<Movies> getPopular() {
+    public Call<Movies> getPopular() {
         return api.getPopular();
     }
 
-    private Call<Movies> getTopRated() {
+    public Call<Movies> getTopRated() {
         return api.getTopRated();
     }
 }
