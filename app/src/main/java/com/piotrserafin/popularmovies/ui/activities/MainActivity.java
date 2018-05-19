@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -12,6 +13,8 @@ import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Movies;
+import com.piotrserafin.popularmovies.ui.CommandFactory;
+import com.piotrserafin.popularmovies.ui.MovieSortType;
 import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 
 import java.util.List;
@@ -26,12 +29,13 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    private TmdbClient.Strategy sortOrder = TmdbClient.Strategy.MOST_POPULAR;
+    private MovieSortType sortType = MovieSortType.MOST_POPULAR;
 
     @BindView(R.id.movies_grid)
     RecyclerView moviesRecyclerView;
 
     private MoviesAdapter moviesAdapter;
+    private final CommandFactory commandFactory = CommandFactory.getInstance();;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,19 +47,16 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesAdapter = new MoviesAdapter(this, this);
         moviesRecyclerView.setAdapter(moviesAdapter);
 
-        fetchMovies();
+        commandFactory.addCommand(MovieSortType.MOST_POPULAR, this::fetchPopularMovies);
+        commandFactory.addCommand(MovieSortType.TOP_RATED, this::fetchTopRatedMovies);
+        commandFactory.addCommand(MovieSortType.FAVORITES, this::fetchFavorites);
+
+        commandFactory.execute(sortType);
     }
 
-    @Override
-    public void onClick(Movie movie) {
-        Intent movieDetailsIntent = new Intent(MainActivity.this, DetailsActivity.class);
-        movieDetailsIntent.putExtra("Movie", movie);
-        startActivity(movieDetailsIntent);
-    }
+    private void fetchPopularMovies() {
 
-    private void fetchMovies() {
-
-        Call<Movies> moviesCall = TmdbClient.getInstance().fetch(sortOrder);
+        Call<Movies> moviesCall = TmdbClient.getInstance().getPopular();
         Callback<Movies> moviesCallback = new Callback<Movies>() {
             @Override
             public void onResponse(Call<Movies> moviesCall, Response<Movies> response) {
@@ -77,11 +78,46 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         moviesCall.enqueue(moviesCallback);
     }
 
+    private void fetchTopRatedMovies() {
+
+        Call<Movies> moviesCall = TmdbClient.getInstance().getTopRated();
+        Callback<Movies> moviesCallback = new Callback<Movies>() {
+            @Override
+            public void onResponse(Call<Movies> moviesCall, Response<Movies> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                List<Movie> movieList = response.body().getResults();
+
+                if(movieList.isEmpty()) {
+                    return;
+                }
+                moviesAdapter.setMovieList(movieList);
+            }
+
+            @Override
+            public void onFailure(Call<Movies> moviesCall, Throwable t) {
+            }
+        };
+        moviesCall.enqueue(moviesCallback);
+    }
+
+    private void fetchFavorites() {
+        Log.d(TAG, "Not implemented");
+    }
+
+    @Override
+    public void onClick(Movie movie) {
+        Intent movieDetailsIntent = new Intent(MainActivity.this, DetailsActivity.class);
+        movieDetailsIntent.putExtra("Movie", movie);
+        startActivity(movieDetailsIntent);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        switch (sortOrder) {
+        switch (sortType) {
             case MOST_POPULAR:
                 menu.findItem(R.id.action_popularity).setChecked(true);
                 break;
@@ -100,15 +136,15 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         switch (item.getItemId()) {
 
             case R.id.action_popularity: {
-                sortOrder = TmdbClient.Strategy.MOST_POPULAR;
-                fetchMovies();
+                sortType = MovieSortType.MOST_POPULAR;
+                commandFactory.execute(sortType);
                 item.setChecked(true);
                 return true;
             }
 
             case R.id.action_topRated: {
-                sortOrder = TmdbClient.Strategy.TOP_RATED;
-                fetchMovies();
+                sortType = MovieSortType.TOP_RATED;
+                commandFactory.execute(sortType);
                 item.setChecked(true);
                 return true;
             }
@@ -121,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
 
     private boolean checkIfOptionChanged(MenuItem item) {
         return ((item.getItemId() == R.id.action_popularity &&
-                sortOrder == TmdbClient.Strategy.MOST_POPULAR) ||
+                sortType == MovieSortType.MOST_POPULAR) ||
                 (item.getItemId() == R.id.action_topRated &&
-                        sortOrder == TmdbClient.Strategy.TOP_RATED));
+                        sortType == MovieSortType.TOP_RATED));
     }
 }
