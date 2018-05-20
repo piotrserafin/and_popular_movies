@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ public class DetailsActivity extends AppCompatActivity
 
     public static final String TAG = DetailsActivity.class.getSimpleName();
 
-    private long movieId;
+    private Movie movie;
 
     @BindView(R.id.backdrop_img)
     ImageView backdropImageView;
@@ -93,11 +92,18 @@ public class DetailsActivity extends AppCompatActivity
         getSupportActionBar().setTitle(R.string.details_acitvity_name);
 
         Intent intent = getIntent();
-        Movie movie = intent.getParcelableExtra("Movie");
+        Movie parcelableMovie = intent.getParcelableExtra("Movie");
 
-        movieId = movie.getId();
+        movie = new Movie(
+                parcelableMovie.getId(),
+                parcelableMovie.getTitle(),
+                parcelableMovie.getPosterPath(),
+                parcelableMovie.getBackdropPath(),
+                parcelableMovie.getVoteAverage(),
+                parcelableMovie.getReleaseDate(),
+                parcelableMovie.getOverview());
 
-        populateUi(movie);
+        populateUi();
         createVideosList();
         createReviewsList();
 
@@ -106,13 +112,7 @@ public class DetailsActivity extends AppCompatActivity
         fetchReviews();
     }
 
-    private void populateUi(Movie movie) {
-        String title = movie.getTitle();
-        String posterPath = movie.getPosterPath();
-        String backdropPath = movie.getBackdropPath();
-        String overview = movie.getOverview();
-        String releaseDate = movie.getReleaseDate();
-        float voteAverage = movie.getVoteAverage();
+    private void populateUi() {
 
         videosLabelTextView.setVisibility(View.INVISIBLE);
         videosDivider.setVisibility(View.INVISIBLE);
@@ -120,17 +120,17 @@ public class DetailsActivity extends AppCompatActivity
         reviewsDivider.setVisibility(View.INVISIBLE);
         reviewsLabelTextView.setVisibility(View.INVISIBLE);
 
-        movieTitleTextView.setText(title);
-        overviewTextView.setText(overview);
-        releaseDateTextView.setText(releaseDate);
-        voteAverageTextView.setText(Float.toString(voteAverage) + getString(R.string.vote_average_max));
+        movieTitleTextView.setText(movie.getTitle());
+        overviewTextView.setText(movie.getOverview());
+        releaseDateTextView.setText(movie.getReleaseDate());
+        voteAverageTextView.setText(Float.toString(movie.getVoteAverage()) + getString(R.string.vote_average_max));
 
         Picasso.get()
-                .load(Utils.prepareBackdropImagePath(backdropPath))
+                .load(Utils.prepareBackdropImagePath(movie.getBackdropPath()))
                 .into(backdropImageView);
 
         Picasso.get()
-                .load(Utils.preparePosterImagePath(posterPath))
+                .load(Utils.preparePosterImagePath(movie.getPosterPath()))
                 .into(posterImageView);
     }
 
@@ -158,7 +158,7 @@ public class DetailsActivity extends AppCompatActivity
 
     private void fetchVideos() {
 
-        Call<Videos> videosCall = TmdbClient.getInstance().getVideos(movieId);
+        Call<Videos> videosCall = TmdbClient.getInstance().getVideos(movie.getId());
         Callback<Videos> videosCallback = new Callback<Videos>() {
             @Override
             public void onResponse(Call<Videos> videosCall, Response<Videos> response) {
@@ -185,7 +185,7 @@ public class DetailsActivity extends AppCompatActivity
 
     private void fetchReviews() {
 
-        Call<Reviews> reviewsCall = TmdbClient.getInstance().getReviews(movieId);
+        Call<Reviews> reviewsCall = TmdbClient.getInstance().getReviews(movie.getId());
         Callback<Reviews> reviewsCallback = new Callback<Reviews>() {
             @Override
             public void onResponse(Call<Reviews> reviewsCall, Response<Reviews> response) {

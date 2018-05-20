@@ -1,24 +1,31 @@
 package com.piotrserafin.popularmovies.ui.activities;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
+import com.piotrserafin.popularmovies.data.MovieContract;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Movies;
 import com.piotrserafin.popularmovies.utils.CommandFactory;
 import com.piotrserafin.popularmovies.utils.MovieSortType;
 import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,11 +34,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements MoviesAdapter.MoviesAdapterOnClickHandler {
+public class MainActivity extends AppCompatActivity
+        implements MoviesAdapter.MoviesAdapterOnClickHandler,
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
+    //The answer to the ultimate question of life, the universe and everything is 42
+    private static final int ID_FAVORITE_MOVIES_LOADER = 42;
+
+    private MoviesAdapter moviesAdapter;
     private MovieSortType sortType = MovieSortType.MOST_POPULAR;
+    private final CommandFactory commandFactory = CommandFactory.getInstance();
 
     @BindView(R.id.movies_grid)
     RecyclerView moviesRecyclerView;
@@ -52,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         getSupportActionBar().setTitle(R.string.main_acitvity_name);
 
         moviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        moviesAdapter = new MoviesAdapter(this, this);
+        moviesAdapter = new MoviesAdapter(this, this, new ArrayList<>());
         moviesRecyclerView.setAdapter(moviesAdapter);
 
         commandFactory.addCommand(MovieSortType.MOST_POPULAR, this::fetchPopularMovies);
@@ -111,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     }
 
     private void fetchFavorites() {
-        Log.d(TAG, "Not implemented");
+        getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
     }
 
     @Override
@@ -124,6 +138,18 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+
+        switch (sortType) {
+            case MOST_POPULAR:
+                menu.findItem(R.id.action_popularity).setChecked(true);
+                break;
+            case TOP_RATED:
+                menu.findItem(R.id.action_topRated).setChecked(true);
+                break;
+            case FAVORITES:
+                menu.findItem(R.id.action_favorites).setChecked(true);
+                break;
+        }
         return true;
     }
 
@@ -149,6 +175,8 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
             }
 
             case R.id.action_favorites: {
+                sortType = MovieSortType.FAVORITES;
+                commandFactory.execute(sortType);
                 item.setChecked(true);
                 return true;
             }
@@ -163,6 +191,37 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         return ((item.getItemId() == R.id.action_popularity &&
                 sortType == MovieSortType.MOST_POPULAR) ||
                 (item.getItemId() == R.id.action_topRated &&
-                        sortType == MovieSortType.TOP_RATED));
+                        sortType == MovieSortType.TOP_RATED) ||
+                (item.getItemId() == R.id.action_favorites &&
+                        sortType == MovieSortType.FAVORITES));
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        switch (id) {
+
+            case ID_FAVORITE_MOVIES_LOADER:
+
+                return new CursorLoader(this,
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        MovieContract.MovieEntry.MOVIE_COLUMNS_PROJECTION,
+                        null,
+                        null,
+                        null);
+
+            default:
+                throw new RuntimeException("Loader Not Implemented: " + id);
+        }
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        moviesAdapter.setMovieList(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        //TODO: ???
     }
 }

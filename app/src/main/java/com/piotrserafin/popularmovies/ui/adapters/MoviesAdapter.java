@@ -1,6 +1,7 @@
 package com.piotrserafin.popularmovies.ui.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.piotrserafin.popularmovies.R;
+import com.piotrserafin.popularmovies.data.MovieContract;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
@@ -26,9 +27,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         void onClick(Movie movie);
     }
 
-    public MoviesAdapter(Context context, MoviesAdapterOnClickHandler clickHandler) {
+    public MoviesAdapter(Context context, MoviesAdapterOnClickHandler clickHandler, List<Movie> results) {
         this.context = context;
         this.clickHandler = clickHandler;
+        this.results = results;
     }
 
     @NonNull
@@ -53,9 +55,30 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
         return (results == null) ? 0 : results.size();
     }
 
-    public void setMovieList(List<Movie> results) {
-        this.results = new ArrayList<>();
-        this.results.addAll(results);
+    public void setMovieList(List<Movie> movies) {
+        results.clear();
+        results.addAll(movies);
+        notifyDataSetChanged();
+    }
+
+    public void setMovieList(Cursor data) {
+        results.clear();
+        if (data != null && data.moveToFirst()) {
+            do {
+
+                Movie movie = new Movie(
+                        data.getLong(MovieContract.MovieEntry.INDEX_MOVIE_ID),
+                        data.getString(MovieContract.MovieEntry.INDEX_TITLE),
+                        data.getString(MovieContract.MovieEntry.INDEX_POSTER_PATH),
+                        data.getString(MovieContract.MovieEntry.INDEX_BACKDROP_PATH),
+                        data.getFloat(MovieContract.MovieEntry.INDEX_VOTE_AVG),
+                        data.getString(MovieContract.MovieEntry.INDEX_RELEASE_DATE),
+                        data.getString(MovieContract.MovieEntry.INDEX_OVERVIEW));
+
+                results.add(movie);
+
+            } while (data.moveToNext());
+        }
         notifyDataSetChanged();
     }
 
