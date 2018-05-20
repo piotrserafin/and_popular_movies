@@ -222,6 +222,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        //TODO: ???
+        throw new RuntimeException("Not used by Popular Movies");
     }
 }

@@ -2,11 +2,16 @@ package com.piotrserafin.popularmovies.ui.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,6 +29,7 @@ import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,6 +86,8 @@ public class DetailsActivity extends AppCompatActivity
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
 
+    private FavioriteAsyncTask favioriteAsyncTask;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +111,10 @@ public class DetailsActivity extends AppCompatActivity
                 parcelableMovie.getReleaseDate(),
                 parcelableMovie.getOverview());
 
+        favioriteAsyncTask = new FavioriteAsyncTask();
+        favioriteAsyncTask.setListener(() -> Log.d(TAG, "AsyncTaskFinished()"));
+        favioriteAsyncTask.execute();
+
         populateUi();
         createVideosList();
         createReviewsList();
@@ -110,6 +122,28 @@ public class DetailsActivity extends AppCompatActivity
         //TODO: Good place to use RxJava to chain multiple Retrofit requests
         fetchVideos();
         fetchReviews();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_favorite: {
+                toogleFavorite();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void toogleFavorite() {
     }
 
     private void populateUi() {
@@ -123,7 +157,13 @@ public class DetailsActivity extends AppCompatActivity
         movieTitleTextView.setText(movie.getTitle());
         overviewTextView.setText(movie.getOverview());
         releaseDateTextView.setText(movie.getReleaseDate());
-        voteAverageTextView.setText(Float.toString(movie.getVoteAverage()) + getString(R.string.vote_average_max));
+
+        String voteAvg = String.format(Locale.US,
+                "%f/%s",
+                movie.getVoteAverage(),
+                getString(R.string.vote_average_max));
+
+        voteAverageTextView.setText(voteAvg);
 
         Picasso.get()
                 .load(Utils.prepareBackdropImagePath(movie.getBackdropPath()))
@@ -225,5 +265,33 @@ public class DetailsActivity extends AppCompatActivity
                     Uri.parse(Utils.prepareYoutubeUrl(key)));
         }
         startActivity(youTubeIntent);
+    }
+
+
+
+    static class FavioriteAsyncTask extends AsyncTask<Void, Void, Void> {
+        private FavoriteAsyncTaskListener listener;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if (listener != null) {
+                listener.onFavoriteAsyncTaskFinished();
+            }
+        }
+
+        public void setListener(FavoriteAsyncTaskListener listener) {
+            this.listener = listener;
+        }
+
+        public interface FavoriteAsyncTaskListener {
+            void onFavoriteAsyncTaskFinished();
+        }
     }
 }
