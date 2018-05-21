@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity
     @BindView(R.id.main_toolbar)
     Toolbar toolbar;
 
-    private MoviesAdapter moviesAdapter;
-    private final CommandFactory commandFactory = CommandFactory.getInstance();;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

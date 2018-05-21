@@ -1,6 +1,9 @@
 package com.piotrserafin.popularmovies.ui.activities;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -8,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +22,7 @@ import android.widget.TextView;
 
 import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
+import com.piotrserafin.popularmovies.data.MovieContract;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Review;
 import com.piotrserafin.popularmovies.model.Reviews;
@@ -28,6 +33,7 @@ import com.piotrserafin.popularmovies.ui.adapters.VideosAdapter;
 import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.Locale;
 
@@ -86,8 +92,6 @@ public class DetailsActivity extends AppCompatActivity
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
 
-    private FavioriteAsyncTask favioriteAsyncTask;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,10 +115,7 @@ public class DetailsActivity extends AppCompatActivity
                 parcelableMovie.getReleaseDate(),
                 parcelableMovie.getOverview());
 
-        favioriteAsyncTask = new FavioriteAsyncTask();
-        favioriteAsyncTask.setListener(() -> Log.d(TAG, "AsyncTaskFinished()"));
-        favioriteAsyncTask.execute();
-
+        checkIfFavorite();
         populateUi();
         createVideosList();
         createReviewsList();
@@ -122,6 +123,16 @@ public class DetailsActivity extends AppCompatActivity
         //TODO: Good place to use RxJava to chain multiple Retrofit requests
         fetchVideos();
         fetchReviews();
+    }
+
+    private void checkIfFavorite() {
+        ToggleFavoriteAsyncTask toggleFavoriteAsyncTask = new ToggleFavoriteAsyncTask(this,true);
+        toggleFavoriteAsyncTask.setListener(this::updateFavoriteButton);
+        toggleFavoriteAsyncTask.execute(movie);
+    }
+
+    private void updateFavoriteButton(boolean isFavorite) {
+        Log.d(TAG, movie.getTitle() + " is in favorites: " + String.valueOf(isFavorite));
     }
 
     @Override
@@ -136,14 +147,17 @@ public class DetailsActivity extends AppCompatActivity
 
         switch (item.getItemId()) {
             case R.id.action_favorite: {
-                toogleFavorite();
+                toggleFavorite();
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    private void toogleFavorite() {
+    private void toggleFavorite() {
+        ToggleFavoriteAsyncTask toggleFavoriteAsyncTask = new ToggleFavoriteAsyncTask(this, false);
+        toggleFavoriteAsyncTask.setListener(this::updateFavoriteButton);
+        toggleFavoriteAsyncTask.execute(movie);
     }
 
     private void populateUi() {
@@ -159,7 +173,7 @@ public class DetailsActivity extends AppCompatActivity
         releaseDateTextView.setText(movie.getReleaseDate());
 
         String voteAvg = String.format(Locale.US,
-                "%f/%s",
+                "%.1f/%s",
                 movie.getVoteAverage(),
                 getString(R.string.vote_average_max));
 
@@ -268,30 +282,89 @@ public class DetailsActivity extends AppCompatActivity
     }
 
 
+    //When called, class toggles (add, remove) movie state in database. This is done in separate thread
+    static class ToggleFavoriteAsyncTask extends AsyncTask<Movie, Void, Boolean> {
 
-    static class FavioriteAsyncTask extends AsyncTask<Void, Void, Void> {
-        private FavoriteAsyncTaskListener listener;
+        private ToggleFavoriteAsyncTaskListener listener;
 
-        @Override
-        protected Void doInBackground(Void... params) {
+        //If strong reference would be used, outer class (activity) wouldn't be cleaned up by GC
+        //during AsyncTask execution
+        private WeakReference<Context> context;
 
-            return null;
+        private boolean checkFavoriteOnly;
+
+        ToggleFavoriteAsyncTask(Context context, boolean checkFavoriteOnly) {
+            this.context = new WeakReference<>(context);
+            this.checkFavoriteOnly = checkFavoriteOnly;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            if (listener != null) {
-                listener.onFavoriteAsyncTaskFinished();
+        protected Boolean doInBackground(Movie... movies) {
+
+            Movie movie = movies[0];
+
+            if(checkFavoriteOnly) {
+                return isFavorite(movie.getId());
+            }
+
+            if (!isFavorite(movie.getId())) {
+
+                ContentValues movieValues = new ContentValues();
+                movieValues.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_TITLE, movie.getTitle());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_POSTER_PATH, movie.getPosterPath());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_BACKDROP_PATH, movie.getBackdropPath());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_VOTE_AVG, movie.getVoteAverage());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_RELEASE_DATE, movie.getReleaseDate());
+                movieValues.put(MovieContract.MovieEntry.COLUMN_OVERVIEW, movie.getOverview());
+
+                context.get().getContentResolver().insert(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        movieValues);
+
+                return true;
+
+            } else {
+
+                context.get().getContentResolver().delete(
+                        MovieContract.MovieEntry.CONTENT_URI,
+                        MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + movie.getId(),
+                        null);
+
+                return false;
+
             }
         }
 
-        public void setListener(FavoriteAsyncTaskListener listener) {
+        @Override
+        protected void onPostExecute(Boolean isFavorite) {
+            if (listener != null) {
+                listener.onToggleFavoriteAsyncTaskFinished(isFavorite);
+            }
+        }
+
+        private boolean isFavorite(long id) {
+            Cursor movieCursor =  context.get().getContentResolver().query(
+                    MovieContract.MovieEntry.CONTENT_URI,
+                    new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID},
+                    MovieContract.MovieEntry.COLUMN_MOVIE_ID + " = " + id,
+                    null,
+                    null);
+
+            if (movieCursor != null && movieCursor.moveToFirst()) {
+                movieCursor.close();
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        void setListener(ToggleFavoriteAsyncTaskListener listener) {
             this.listener = listener;
         }
 
-        public interface FavoriteAsyncTaskListener {
-            void onFavoriteAsyncTaskFinished();
+        public interface ToggleFavoriteAsyncTaskListener {
+            void onToggleFavoriteAsyncTaskFinished(Boolean isFavorite);
         }
     }
 }
