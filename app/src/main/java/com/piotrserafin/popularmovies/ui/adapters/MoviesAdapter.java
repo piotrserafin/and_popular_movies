@@ -45,7 +45,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
 
         Picasso.get()
                 .load(Utils.preparePosterImagePath(movie.getPosterPath()))
-                .placeholder(R.color.colorPrimaryDark)
                 .into(holder.posterImage);
     }
 

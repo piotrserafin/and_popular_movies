@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @BindView(R.id.movies_grid)
     RecyclerView moviesRecyclerView;
 
+    @BindView(R.id.main_toolbar)
+    Toolbar toolbar;
+
     private MoviesAdapter moviesAdapter;
     private final CommandFactory commandFactory = CommandFactory.getInstance();;
 
@@ -42,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.main_acitvity_name);
 
         moviesRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         moviesAdapter = new MoviesAdapter(this, this);
@@ -116,15 +123,6 @@ public class MainActivity extends AppCompatActivity implements MoviesAdapter.Mov
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
-        switch (sortType) {
-            case MOST_POPULAR:
-                menu.findItem(R.id.action_popularity).setChecked(true);
-                break;
-            case TOP_RATED:
-                menu.findItem(R.id.action_topRated).setChecked(true);
-                break;
-        }
         return true;
     }
 

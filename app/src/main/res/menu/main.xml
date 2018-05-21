@@ -5,7 +5,8 @@
         android:id="@+id/action_popularity"
         android:orderInCategory="1"
         android:title="@string/action_popularity"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:checked="true"/>
 
     <item
         android:id="@+id/action_topRated"

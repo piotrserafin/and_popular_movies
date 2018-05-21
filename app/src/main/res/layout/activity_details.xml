@@ -11,6 +11,20 @@
         android:layout_height="wrap_content"
         tools:context=".ui.activities.DetailsActivity">
 
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/details_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="4dp" />
+
+        </android.support.design.widget.AppBarLayout>
+
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_start"
             android:layout_width="wrap_content"

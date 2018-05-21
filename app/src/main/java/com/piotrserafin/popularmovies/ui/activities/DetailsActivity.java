@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -74,6 +75,9 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.reviews_list)
     RecyclerView reviewsRecyclerView;
 
+    @BindView(R.id.details_toolbar)
+    Toolbar toolbar;
+
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
 
@@ -84,7 +88,9 @@ public class DetailsActivity extends AppCompatActivity
 
         ButterKnife.bind(this);
 
-        
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.details_acitvity_name);
 
         Intent intent = getIntent();
         Movie movie = intent.getParcelableExtra("Movie");
@@ -121,12 +127,10 @@ public class DetailsActivity extends AppCompatActivity
 
         Picasso.get()
                 .load(Utils.prepareBackdropImagePath(backdropPath))
-                .placeholder(R.color.colorPrimaryDark)
                 .into(backdropImageView);
 
         Picasso.get()
                 .load(Utils.preparePosterImagePath(posterPath))
-                .placeholder(R.color.colorPrimaryDark)
                 .into(posterImageView);
     }
 

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Pop Movies</string>
+
+    <string name="main_acitvity_name">Movies</string>
     <string name="details_acitvity_name">Movie Details</string>
+
     <string name="action_popularity">Most Popular</string>
     <string name="action_topRated">Highest Rated</string>
     <string name="poster_description">Movie Poster</string>
