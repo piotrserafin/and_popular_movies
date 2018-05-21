@@ -1,4 +1,4 @@
-package com.piotrserafin.popularmovies.ui;
+package com.piotrserafin.popularmovies.utils;
 
 import java.util.HashMap;
 import java.util.Map;

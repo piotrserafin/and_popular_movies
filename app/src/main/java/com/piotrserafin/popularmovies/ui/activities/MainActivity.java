@@ -13,8 +13,8 @@ import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Movies;
-import com.piotrserafin.popularmovies.ui.CommandFactory;
-import com.piotrserafin.popularmovies.ui.MovieSortType;
+import com.piotrserafin.popularmovies.utils.CommandFactory;
+import com.piotrserafin.popularmovies.utils.MovieSortType;
 import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 
 import java.util.List;
