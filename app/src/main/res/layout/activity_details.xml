@@ -30,14 +30,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="@dimen/guideline_vertical_start_offset" />
+            app:layout_constraintGuide_begin="@dimen/guideline_vertical_start_offset"/>
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline_vertical_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_end="@dimen/guideline_vertical_end_offset" />
+            app:layout_constraintGuide_end="@dimen/guideline_vertical_end_offset"/>
 
 
         <ImageView
@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:src="@drawable/sample_backdrop_1280" />
+            tools:src="@drawable/sample_backdrop_1280"/>
 
         <ImageView
             android:id="@+id/detail_img"
@@ -61,7 +61,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/backdrop_img"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintTop_toBottomOf="@+id/backdrop_img"
-            tools:src="@drawable/sample_poster_w185" />
+            tools:src="@drawable/sample_poster_w185"/>
 
         <TextView
             android:id="@+id/movie_title"
@@ -77,9 +77,11 @@
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/details_barrier"
             app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/detail_img"
             app:layout_constraintTop_toBottomOf="@+id/backdrop_img"
-            tools:text="@tools:sample/lorem" />
+            app:layout_constraintVertical_bias="0.0"
+            tools:text="@tools:sample/lorem"/>
 
         <android.support.constraint.Barrier
             android:id="@+id/details_barrier"
@@ -87,19 +89,7 @@
             android:layout_height="wrap_content"
             android:visibility="visible"
             app:barrierDirection="bottom"
-            app:constraint_referenced_ids="detail_img, movie_title" />
-
-        <TextView
-            android:id="@+id/release_date"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
-            app:layout_constraintTop_toBottomOf="@+id/details_barrier"
-            tools:text="@tools:sample/date/ddmmyy" />
-
+            app:constraint_referenced_ids="detail_img, movie_title"/>
 
         <TextView
             android:id="@+id/vote_average"
@@ -107,27 +97,41 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/release_date"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
-            app:layout_constraintTop_toBottomOf="@+id/release_date"
-            tools:text="@tools:sample/lorem" />
+            app:layout_constraintTop_toBottomOf="@+id/details_barrier"
+            tools:text="@tools:sample/lorem"/>
+
+        <TextView
+            android:id="@+id/release_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textSize="14sp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintEnd_toStartOf="@+id/guideline_vertical_end"
+            app:layout_constraintStart_toEndOf="@+id/vote_average"
+            app:layout_constraintTop_toBottomOf="@+id/details_barrier"
+            tools:text="@tools:sample/date/ddmmyy"/>
 
         <TextView
             android:id="@+id/overview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintTop_toBottomOf="@+id/vote_average"
-            tools:text="As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain." />
+            tools:text="As the Avengers and their allies have continued to protect the world from threats too large for any one hero to handle, a new danger has emerged from the cosmic shadows: Thanos. A despot of intergalactic infamy, his goal is to collect all six Infinity Stones, artifacts of unimaginable power, and use them to inflict his twisted will on all of reality. Everything the Avengers have fought for has led up to this moment - the fate of Earth and existence itself has never been more uncertain."/>
 
         <View
             android:id="@+id/videos_divider"
             style="@style/listDivider"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/overview"/>
 
         <TextView
@@ -135,11 +139,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="Trailers:"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/videos_divider"
-            android:text="Trailers:" />
+            app:layout_constraintTop_toBottomOf="@+id/videos_divider"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/videos_list"
@@ -148,17 +152,17 @@
             android:clipToPadding="false"
             android:nestedScrollingEnabled="false"
             android:scrollbars="none"
-            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
-            app:layout_constraintTop_toBottomOf="@+id/videos_label" />
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
+            app:layout_constraintTop_toBottomOf="@+id/videos_label"/>
 
         <!--TODO: nasty hack with 0dp (partiall cover rv divider), remove last divider in decorator-->
         <View
             android:id="@+id/reviews_divider"
             style="@style/listDivider"
             android:layout_marginTop="0dp"
-            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
+            app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
             app:layout_constraintTop_toBottomOf="@id/videos_list"/>
 
         <TextView
@@ -166,11 +170,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="Reviews:"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/reviews_divider"
-            android:text="Reviews:" />
+            app:layout_constraintTop_toBottomOf="@+id/reviews_divider"/>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/reviews_list"
@@ -182,7 +186,7 @@
             android:scrollbars="none"
             app:layout_constraintEnd_toEndOf="@+id/guideline_vertical_end"
             app:layout_constraintStart_toStartOf="@+id/guideline_vertical_start"
-            app:layout_constraintTop_toBottomOf="@+id/reviews_label" />
+            app:layout_constraintTop_toBottomOf="@+id/reviews_label"/>
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>

@@ -26,11 +26,21 @@ public class Movie implements Parcelable {
     Movie(Parcel in) {
         this.id = in.readLong();
         this.title = in.readString();
-        this.backdropPath = in.readString();
         this.posterPath = in.readString();
-        this.overview = in.readString();
-        this.releaseDate = in.readString();
+        this.backdropPath = in.readString();
         this.voteAverage = in.readFloat();
+        this.releaseDate = in.readString();
+        this.overview = in.readString();
+    }
+
+    public Movie(long id, String title, String posterPath, String backdropPath, float voteAverage, String releaseDate,  String overview) {
+        this.id = id;
+        this.title = title;
+        this.posterPath = posterPath;
+        this.backdropPath = backdropPath;
+        this.voteAverage = voteAverage;
+        this.releaseDate = releaseDate;
+        this.overview = overview;
     }
 
     @SerializedName("poster_path")
@@ -196,10 +206,10 @@ public class Movie implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(title);
-        dest.writeString(backdropPath);
         dest.writeString(posterPath);
-        dest.writeString(overview);
-        dest.writeString(releaseDate);
+        dest.writeString(backdropPath);
         dest.writeFloat(voteAverage);
+        dest.writeString(releaseDate);
+        dest.writeString(overview);
     }
 }

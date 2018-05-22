@@ -14,6 +14,9 @@ private static final String API_KEY = "[TMDB API KEY HERE]";
 
 Hiding API key solution based on blogpost:
 
-https://richardroseblog.wordpress.com/2016/05/29/hiding-secret-api-keys-from-git/
+["Hiding secret api keys from git" blogpost by Richard Rose](https://richardroseblog.wordpress.com/2016/05/29/hiding-secret-api-keys-from-git/)
 
+MovieProvider (ContentProvider) implementation is based on Sunshine app realized during Android Nanodegree Scholarship Challenge and available here:
+
+[piotrserafin/ud851-Sunshine](https://github.com/piotrserafin/ud851-Sunshine.git)
 

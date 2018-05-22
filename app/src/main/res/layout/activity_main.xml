@@ -33,4 +33,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         app:layout_constraintTop_toBottomOf="@id/main_appbar_layout"/>
 
+    <include layout="@layout/empty_favorites" />
+
 </android.support.constraint.ConstraintLayout>
