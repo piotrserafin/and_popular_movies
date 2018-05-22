@@ -15,20 +15,19 @@ import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdapterViewHolder> {
 
     private final Context context;
     final private MoviesAdapterOnClickHandler clickHandler;
-    private ArrayList<Movie> results;
+    private List<Movie> results;
 
     public interface MoviesAdapterOnClickHandler {
         void onClick(Movie movie);
     }
 
-    public MoviesAdapter(Context context, MoviesAdapterOnClickHandler clickHandler, ArrayList<Movie> results) {
+    public MoviesAdapter(Context context, MoviesAdapterOnClickHandler clickHandler, List<Movie> results) {
         this.context = context;
         this.clickHandler = clickHandler;
         this.results = results;
@@ -81,10 +80,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesAdap
             } while (data.moveToNext());
         }
         notifyDataSetChanged();
-    }
-
-    public ArrayList<Movie> getResults() {
-        return results;
     }
 
     public class MoviesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
