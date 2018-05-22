@@ -88,13 +88,12 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 moviesAdapter.setMovieList(movieList);
-
                 updateLayout();
             }
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
-                updateLayout();
+
             }
         };
         moviesCall.enqueue(moviesCallback);
@@ -115,13 +114,12 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 moviesAdapter.setMovieList(movieList);
-
                 updateLayout();
             }
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
-                updateLayout();
+
             }
         };
         moviesCall.enqueue(moviesCallback);
@@ -175,8 +173,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        if (checkIfOptionChanged(item)) return true;
-
         switch (item.getItemId()) {
 
             case R.id.action_popularity: {
@@ -214,15 +210,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    private boolean checkIfOptionChanged(MenuItem item) {
-        return ((item.getItemId() == R.id.action_popularity &&
-                sortType == MovieSortType.MOST_POPULAR) ||
-                (item.getItemId() == R.id.action_topRated &&
-                        sortType == MovieSortType.TOP_RATED) ||
-                (item.getItemId() == R.id.action_favorites &&
-                        sortType == MovieSortType.FAVORITES));
-    }
-
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -251,6 +238,5 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         moviesAdapter.setMovieList((Cursor)null);
-        updateLayout();
     }
 }
