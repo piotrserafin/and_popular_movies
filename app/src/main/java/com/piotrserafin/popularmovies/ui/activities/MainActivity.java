@@ -3,6 +3,7 @@ package com.piotrserafin.popularmovies.ui.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -40,8 +41,14 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    //The answer to the ultimate question of life, the universe and everythingd
+    //The answer to the ultimate question of life, the universe and everything
     private static final int ID_FAVORITE_MOVIES_LOADER = 42;
+
+    private static final String EXTRA_MOVIES = "EXTRA_MOVIES";
+    private static final String EXTRA_SORT_TYPE = "EXTRA_SORT_TYPE";
+
+    private final String RECYCLER_POSITION_KEY = "recycler_position";
+    private int recyclerPosition = RecyclerView.NO_POSITION;
 
     private MoviesAdapter moviesAdapter;
     private MovieSortType sortType = MovieSortType.MOST_POPULAR;
@@ -70,6 +77,20 @@ public class MainActivity extends AppCompatActivity
         commandFactory.addCommand(MovieSortType.TOP_RATED, this::fetchTopRatedMovies);
         commandFactory.addCommand(MovieSortType.FAVORITES, this::fetchFavorites);
 
+        if (savedInstanceState != null) {
+            sortType = savedInstanceState.getParcelable(EXTRA_SORT_TYPE);
+            if (savedInstanceState.containsKey(EXTRA_MOVIES)) {
+                List<Movie> movies = savedInstanceState.getParcelableArrayList(EXTRA_MOVIES);
+                moviesAdapter.setMovieList(movies);
+                startLoaderIfSortOrderEqualsFavorites();
+            }
+            updateLayout();
+        } else {
+            fetchMovies();
+        }
+    }
+
+    private void fetchMovies() {
         commandFactory.execute(sortType);
     }
 
@@ -144,6 +165,42 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(RECYCLER_POSITION_KEY,  moviesRecyclerView.getLayoutManager().onSaveInstanceState());
+
+        ArrayList<Movie> movies = moviesAdapter.getResults();
+        if (movies != null && !movies.isEmpty()) {
+            outState.putParcelableArrayList(EXTRA_MOVIES, movies);
+        }
+        outState.putParcelable(EXTRA_SORT_TYPE, sortType);
+
+        stopLoaderIfSortOrderEqualsFavorites();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        if (savedInstanceState.containsKey(EXTRA_SORT_TYPE)) {
+            sortType = savedInstanceState.getParcelable(EXTRA_SORT_TYPE);
+        }
+
+        if (savedInstanceState.containsKey(EXTRA_MOVIES)) {
+            List<Movie> movies = savedInstanceState.getParcelableArrayList(EXTRA_MOVIES);
+            moviesAdapter.setMovieList(movies);
+            startLoaderIfSortOrderEqualsFavorites();
+            updateLayout();
+        }
+
+        if (savedInstanceState.containsKey(RECYCLER_POSITION_KEY)) {
+            Parcelable listState = savedInstanceState.getParcelable(RECYCLER_POSITION_KEY);
+            moviesRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     @Override
     public void onClick(Movie movie) {
@@ -178,7 +235,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_popularity: {
                 stopLoaderIfSortOrderEqualsFavorites();
                 sortType = MovieSortType.MOST_POPULAR;
-                commandFactory.execute(sortType);
+                fetchMovies();
                 item.setChecked(true);
                 return true;
             }
@@ -186,14 +243,14 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_topRated: {
                 stopLoaderIfSortOrderEqualsFavorites();
                 sortType = MovieSortType.TOP_RATED;
-                commandFactory.execute(sortType);
+                fetchMovies();
                 item.setChecked(true);
                 return true;
             }
 
             case R.id.action_favorites: {
                 sortType = MovieSortType.FAVORITES;
-                commandFactory.execute(sortType);
+                fetchMovies();
                 item.setChecked(true);
                 return true;
             }
@@ -201,6 +258,12 @@ public class MainActivity extends AppCompatActivity
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    private void startLoaderIfSortOrderEqualsFavorites() {
+        if (sortType.equals(MovieSortType.FAVORITES)) {
+            getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
         }
     }
 
