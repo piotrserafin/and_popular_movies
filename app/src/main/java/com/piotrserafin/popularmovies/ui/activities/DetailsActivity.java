@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -14,7 +15,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -91,6 +91,8 @@ public class DetailsActivity extends AppCompatActivity
     @BindView(R.id.details_toolbar)
     Toolbar toolbar;
 
+    MenuItem favoriteMenuItem;
+
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
 
@@ -119,7 +121,6 @@ public class DetailsActivity extends AppCompatActivity
                 parcelableMovie.getReleaseDate(),
                 parcelableMovie.getOverview());
 
-        checkIfFavorite();
         populateUi();
         createVideosList();
         createReviewsList();
@@ -136,16 +137,26 @@ public class DetailsActivity extends AppCompatActivity
     }
 
     private void updateFavoriteButton(boolean isFavorite) {
-        Log.d(TAG, movie.getTitle() + " is in favorites: " + String.valueOf(isFavorite));
+        if(isFavorite) {
+            favoriteMenuItem.setIcon(ContextCompat.getDrawable(this,R.drawable.ic_baseline_favorite_24px));
+        } else {
+            favoriteMenuItem.setIcon(ContextCompat.getDrawable(this, R.drawable.ic_baseline_favorite_border_24px));
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
+        final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.detail, menu);
 
         MenuItem shareItem = menu.findItem(R.id.action_share);
         shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
+        favoriteMenuItem = menu.findItem(R.id.action_favorite_button);
+
+        //HACK: Moved here from onCreate() because of favoriteMenuItem NPE
+        //Android Lifecycle is mess....
+        checkIfFavorite();
 
         return true;
     }
@@ -154,7 +165,7 @@ public class DetailsActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.action_favorite: {
+            case R.id.action_favorite_button: {
                 toggleFavorite();
                 return true;
             }

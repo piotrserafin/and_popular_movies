@@ -4,7 +4,7 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="com.example.android.sunshine.DetailActivity">
     <item
-        android:id="@+id/action_favorite"
+        android:id="@+id/action_favorite_button"
         android:icon="@drawable/ic_baseline_favorite_border_24px"
         android:title="@string/action_favorites"
         app:showAsAction="ifRoom"/>
