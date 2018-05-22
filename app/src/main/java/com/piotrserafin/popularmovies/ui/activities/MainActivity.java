@@ -3,7 +3,6 @@ package com.piotrserafin.popularmovies.ui.activities;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
@@ -44,12 +43,6 @@ public class MainActivity extends AppCompatActivity
     //The answer to the ultimate question of life, the universe and everything
     private static final int ID_FAVORITE_MOVIES_LOADER = 42;
 
-    private static final String EXTRA_MOVIES = "EXTRA_MOVIES";
-    private static final String EXTRA_SORT_TYPE = "EXTRA_SORT_TYPE";
-
-    private final String RECYCLER_POSITION_KEY = "recycler_position";
-    private int recyclerPosition = RecyclerView.NO_POSITION;
-
     private MoviesAdapter moviesAdapter;
     private MovieSortType sortType = MovieSortType.MOST_POPULAR;
     private final CommandFactory commandFactory = CommandFactory.getInstance();
@@ -77,17 +70,8 @@ public class MainActivity extends AppCompatActivity
         commandFactory.addCommand(MovieSortType.TOP_RATED, this::fetchTopRatedMovies);
         commandFactory.addCommand(MovieSortType.FAVORITES, this::fetchFavorites);
 
-        if (savedInstanceState != null) {
-            sortType = savedInstanceState.getParcelable(EXTRA_SORT_TYPE);
-            if (savedInstanceState.containsKey(EXTRA_MOVIES)) {
-                List<Movie> movies = savedInstanceState.getParcelableArrayList(EXTRA_MOVIES);
-                moviesAdapter.setMovieList(movies);
-                startLoaderIfSortOrderEqualsFavorites();
-            }
-            updateLayout();
-        } else {
-            fetchMovies();
-        }
+        fetchMovies();
+
     }
 
     private void fetchMovies() {
@@ -114,7 +98,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
-
+                updateLayout();
             }
         };
         moviesCall.enqueue(moviesCallback);
@@ -140,14 +124,14 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
-
+                updateLayout();
             }
         };
         moviesCall.enqueue(moviesCallback);
     }
 
     private void fetchFavorites() {
-        getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
+        startLoaderIfSortOrderEqualsFavorites();
     }
 
     private void updateLayout() {
@@ -163,43 +147,6 @@ public class MainActivity extends AppCompatActivity
             findViewById(R.id.no_connection).setVisibility(View.GONE);
             findViewById(R.id.empty_favorites).setVisibility(View.GONE);
         }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelable(RECYCLER_POSITION_KEY,  moviesRecyclerView.getLayoutManager().onSaveInstanceState());
-
-        ArrayList<Movie> movies = moviesAdapter.getResults();
-        if (movies != null && !movies.isEmpty()) {
-            outState.putParcelableArrayList(EXTRA_MOVIES, movies);
-        }
-        outState.putParcelable(EXTRA_SORT_TYPE, sortType);
-
-        stopLoaderIfSortOrderEqualsFavorites();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-
-        if (savedInstanceState.containsKey(EXTRA_SORT_TYPE)) {
-            sortType = savedInstanceState.getParcelable(EXTRA_SORT_TYPE);
-        }
-
-        if (savedInstanceState.containsKey(EXTRA_MOVIES)) {
-            List<Movie> movies = savedInstanceState.getParcelableArrayList(EXTRA_MOVIES);
-            moviesAdapter.setMovieList(movies);
-            startLoaderIfSortOrderEqualsFavorites();
-            updateLayout();
-        }
-
-        if (savedInstanceState.containsKey(RECYCLER_POSITION_KEY)) {
-            Parcelable listState = savedInstanceState.getParcelable(RECYCLER_POSITION_KEY);
-            moviesRecyclerView.getLayoutManager().onRestoreInstanceState(listState);
-        }
-
-        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -296,10 +243,11 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         moviesAdapter.setMovieList(data);
         updateLayout();
-    }
+}
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         moviesAdapter.setMovieList((Cursor)null);
+        updateLayout();
     }
 }
