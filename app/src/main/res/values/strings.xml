@@ -13,4 +13,6 @@
     <string name="poster_description">Movie Poster</string>
     <string name="vote_average_max">10.0</string>
     <string name="share">Share</string>
+    <string name="empty_favorites">Empty Favorites</string>
+    <string name="no_connection">Possible connection lost</string>
 </resources>

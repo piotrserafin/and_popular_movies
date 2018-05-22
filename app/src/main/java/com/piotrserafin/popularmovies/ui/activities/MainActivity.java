@@ -12,18 +12,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.piotrserafin.popularmovies.R;
 import com.piotrserafin.popularmovies.api.TmdbClient;
 import com.piotrserafin.popularmovies.data.MovieContract;
 import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Movies;
+import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 import com.piotrserafin.popularmovies.utils.CommandFactory;
 import com.piotrserafin.popularmovies.utils.MovieSortType;
-import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,10 +88,13 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 moviesAdapter.setMovieList(movieList);
+
+                updateLayout();
             }
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
+                updateLayout();
             }
         };
         moviesCall.enqueue(moviesCallback);
@@ -112,10 +115,13 @@ public class MainActivity extends AppCompatActivity
                     return;
                 }
                 moviesAdapter.setMovieList(movieList);
+
+                updateLayout();
             }
 
             @Override
             public void onFailure(Call<Movies> moviesCall, Throwable t) {
+                updateLayout();
             }
         };
         moviesCall.enqueue(moviesCallback);
@@ -124,6 +130,22 @@ public class MainActivity extends AppCompatActivity
     private void fetchFavorites() {
         getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
     }
+
+    private void updateLayout() {
+        if (moviesAdapter.getItemCount() == 0) {
+            if (sortType.equals(MovieSortType.FAVORITES)) {
+                findViewById(R.id.no_connection).setVisibility(View.GONE);
+                findViewById(R.id.empty_favorites).setVisibility(View.VISIBLE);
+            } else {
+                findViewById(R.id.no_connection).setVisibility(View.VISIBLE);
+                findViewById(R.id.empty_favorites).setVisibility(View.GONE);
+            }
+        } else {
+            findViewById(R.id.no_connection).setVisibility(View.GONE);
+            findViewById(R.id.empty_favorites).setVisibility(View.GONE);
+        }
+    }
+
 
     @Override
     public void onClick(Movie movie) {
@@ -223,10 +245,12 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         moviesAdapter.setMovieList(data);
+        updateLayout();
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         moviesAdapter.setMovieList((Cursor)null);
+        updateLayout();
     }
 }
