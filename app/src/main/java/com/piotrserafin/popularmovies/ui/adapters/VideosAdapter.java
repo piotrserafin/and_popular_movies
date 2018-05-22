@@ -52,6 +52,10 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosAdap
         notifyDataSetChanged();
     }
 
+    public List<Video> getResults() {
+        return results;
+    }
+
     class VideosAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         final TextView videoType;

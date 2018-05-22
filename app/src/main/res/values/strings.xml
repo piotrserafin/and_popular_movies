@@ -12,4 +12,5 @@
 
     <string name="poster_description">Movie Poster</string>
     <string name="vote_average_max">10.0</string>
+    <string name="share">Share</string>
 </resources>

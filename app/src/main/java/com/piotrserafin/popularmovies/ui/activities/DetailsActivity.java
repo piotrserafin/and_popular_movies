@@ -7,10 +7,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -92,6 +94,8 @@ public class DetailsActivity extends AppCompatActivity
     private VideosAdapter videosAdapter;
     private ReviewsAdapter reviewsAdapter;
 
+    private ShareActionProvider shareActionProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,6 +143,10 @@ public class DetailsActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.detail, menu);
+
+        MenuItem shareItem = menu.findItem(R.id.action_share);
+        shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+
         return true;
     }
 
@@ -228,6 +236,11 @@ public class DetailsActivity extends AppCompatActivity
                 videosDivider.setVisibility(View.VISIBLE);
                 videosLabelTextView.setVisibility(View.VISIBLE);
                 videosAdapter.setVideosList(videos);
+
+                if (videosAdapter.getItemCount() > 0) {
+                    Video video = videosAdapter.getResults().get(0);
+                    configureTrailerShareActionProvider(video);
+                }
             }
 
             @Override
@@ -235,6 +248,14 @@ public class DetailsActivity extends AppCompatActivity
             }
         };
         videosCall.enqueue(videosCallback);
+    }
+
+    private void configureTrailerShareActionProvider(Video video) {
+        Intent shareIntent = new Intent(android.content.Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Trailer: " + movie.getTitle());
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, Utils.prepareYoutubeUrl(video.getKey()));
+        shareActionProvider.setShareIntent(shareIntent);
     }
 
     private void fetchReviews() {
@@ -280,7 +301,6 @@ public class DetailsActivity extends AppCompatActivity
         }
         startActivity(youTubeIntent);
     }
-
 
     //When called, class toggles (add, remove) movie state in database. This is done in separate thread
     static class ToggleFavoriteAsyncTask extends AsyncTask<Movie, Void, Boolean> {

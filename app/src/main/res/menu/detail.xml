@@ -8,4 +8,10 @@
         android:icon="@drawable/ic_baseline_favorite_border_24px"
         android:title="@string/action_favorites"
         app:showAsAction="ifRoom"/>
+
+    <item android:id="@+id/action_share"
+          android:title="@string/share"
+          app:showAsAction="ifRoom"
+          app:actionProviderClass="android.support.v7.widget.ShareActionProvider"/>
+
 </menu>

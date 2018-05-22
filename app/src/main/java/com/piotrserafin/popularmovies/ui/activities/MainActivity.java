@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    //The answer to the ultimate question of life, the universe and everything is 42
+    //The answer to the ultimate question of life, the universe and everythingd
     private static final int ID_FAVORITE_MOVIES_LOADER = 42;
 
     private MoviesAdapter moviesAdapter;
