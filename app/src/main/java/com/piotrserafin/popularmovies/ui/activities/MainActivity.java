@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity
         switch (item.getItemId()) {
 
             case R.id.action_popularity: {
+                stopLoaderIfSortOrderEqualsFavorites();
                 sortType = MovieSortType.MOST_POPULAR;
                 commandFactory.execute(sortType);
                 item.setChecked(true);
@@ -165,6 +166,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             case R.id.action_topRated: {
+                stopLoaderIfSortOrderEqualsFavorites();
                 sortType = MovieSortType.TOP_RATED;
                 commandFactory.execute(sortType);
                 item.setChecked(true);
@@ -181,6 +183,12 @@ public class MainActivity extends AppCompatActivity
             default: {
                 return super.onOptionsItemSelected(item);
             }
+        }
+    }
+
+    private void stopLoaderIfSortOrderEqualsFavorites() {
+        if (sortType.equals(MovieSortType.FAVORITES)) {
+            getSupportLoaderManager().destroyLoader(ID_FAVORITE_MOVIES_LOADER);
         }
     }
 
@@ -219,6 +227,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        throw new RuntimeException("Not used by Popular Movies");
+        moviesAdapter.setMovieList((Cursor)null);
     }
 }
