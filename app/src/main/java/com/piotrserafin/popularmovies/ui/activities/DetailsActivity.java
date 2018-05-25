@@ -15,6 +15,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.ShareActionProvider;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -305,12 +306,24 @@ public class DetailsActivity extends AppCompatActivity
 
         Intent youTubeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + key));
 
-        // If there is no YT app, start in browser
-        if (youTubeIntent.resolveActivity(getPackageManager()) == null) {
-            youTubeIntent = new Intent(Intent.ACTION_VIEW,
+        //Check if YouTube App is present
+        if (youTubeIntent.resolveActivity(getPackageManager()) != null) {
+
+            startActivity(youTubeIntent);
+
+        //else create intent for browser
+        } else {
+
+            Intent browserUouTubeIntent = new Intent(Intent.ACTION_VIEW,
                     Uri.parse(Utils.prepareYoutubeUrl(key)));
+
+            // Check if browser exists
+            if (browserUouTubeIntent.resolveActivity(getPackageManager()) == null) {
+                startActivity(browserUouTubeIntent);
+            } else {
+                Log.d(TAG, "Both YT and Browser apps missing, cannot play video");
+            }
         }
-        startActivity(youTubeIntent);
     }
 
     //When called, class toggles (add, remove) movie state in database. This is done in separate thread
