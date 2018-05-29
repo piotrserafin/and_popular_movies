@@ -1,10 +1,13 @@
 package com.piotrserafin.popularmovies.ui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -12,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +27,8 @@ import com.piotrserafin.popularmovies.model.Movie;
 import com.piotrserafin.popularmovies.model.Movies;
 import com.piotrserafin.popularmovies.ui.adapters.MoviesAdapter;
 import com.piotrserafin.popularmovies.utils.CommandFactory;
-import com.piotrserafin.popularmovies.utils.MovieSortType;
 
+import java.lang.annotation.Retention;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +37,8 @@ import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class MainActivity extends AppCompatActivity
         implements MoviesAdapter.MoviesAdapterOnClickHandler,
@@ -44,10 +50,19 @@ public class MainActivity extends AppCompatActivity
     private static final int ID_FAVORITE_MOVIES_LOADER = 42;
 
     public static final String MOVIES = "MOVIES";
-    public static final String SORT_BY = "SORT_BY";
+
+    @Retention(SOURCE)
+    @StringDef({
+            MOST_POPULAR,
+            TOP_RATED,
+            FAVORITES
+    })
+    public @interface sortType {}
+    public static final String MOST_POPULAR = "most_popular";
+    public static final String TOP_RATED = "top_rated";
+    public static final String FAVORITES = "favorites";
 
     private MoviesAdapter moviesAdapter;
-    private MovieSortType sortType;
     private final CommandFactory commandFactory = CommandFactory.getInstance();
 
     @BindView(R.id.movies_grid)
@@ -69,14 +84,14 @@ public class MainActivity extends AppCompatActivity
         moviesAdapter = new MoviesAdapter(this, this, new ArrayList<>());
         moviesRecyclerView.setAdapter(moviesAdapter);
 
-        commandFactory.addCommand(MovieSortType.MOST_POPULAR, this::fetchPopularMovies);
-        commandFactory.addCommand(MovieSortType.TOP_RATED, this::fetchTopRatedMovies);
-        commandFactory.addCommand(MovieSortType.FAVORITES, this::fetchFavorites);
+        commandFactory.addCommand(MOST_POPULAR, this::fetchPopularMovies);
+        commandFactory.addCommand(TOP_RATED, this::fetchTopRatedMovies);
+        commandFactory.addCommand(FAVORITES, this::fetchFavorites);
 
         if(savedInstanceState != null) {
-            sortType = savedInstanceState.getParcelable(SORT_BY);
+            String sortType = getSortBySharedPreference();
 
-            if (sortType.equals(MovieSortType.FAVORITES)) {
+            if (sortType.equals(FAVORITES)) {
                 getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
             } else {
                 List<Movie> movies = savedInstanceState.getParcelableArrayList(MOVIES);
@@ -84,13 +99,12 @@ public class MainActivity extends AppCompatActivity
                 updateLayout();
             }
         } else {
-            sortType = MovieSortType.MOST_POPULAR;
             fetchMovies();
         }
     }
 
     private void fetchMovies() {
-        commandFactory.execute(sortType);
+        commandFactory.execute(getSortBySharedPreference());
     }
 
     private void fetchPopularMovies() {
@@ -151,7 +165,8 @@ public class MainActivity extends AppCompatActivity
 
     private void updateLayout() {
         if (moviesAdapter.getItemCount() == 0) {
-            if (sortType.equals(MovieSortType.FAVORITES)) {
+            String sortType = getSortBySharedPreference();
+            if (sortType.equals(FAVORITES)) {
                 findViewById(R.id.no_connection).setVisibility(View.GONE);
                 findViewById(R.id.empty_favorites).setVisibility(View.VISIBLE);
             } else {
@@ -166,16 +181,18 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
         ArrayList<Movie> movies = moviesAdapter.getResults();
+
         if (movies != null && !movies.isEmpty()) {
             outState.putParcelableArrayList(MOVIES, movies);
         }
-        outState.putParcelable(SORT_BY, sortType);
 
-        if (!sortType.equals(MovieSortType.FAVORITES)) {
+        String sortType = getSortBySharedPreference();
+        if (!sortType.equals(FAVORITES)) {
             getSupportLoaderManager().destroyLoader(ID_FAVORITE_MOVIES_LOADER);
         }
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -188,7 +205,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
+        String sortType = getSortBySharedPreference();
         switch (sortType) {
             case MOST_POPULAR:
                 menu.findItem(R.id.action_popularity).setChecked(true);
@@ -210,7 +227,7 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_popularity: {
                 stopLoaderIfSortOrderEqualsFavorites();
-                sortType = MovieSortType.MOST_POPULAR;
+                setSortBySharedPreference(MOST_POPULAR);
                 fetchMovies();
                 item.setChecked(true);
                 return true;
@@ -218,14 +235,14 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.action_topRated: {
                 stopLoaderIfSortOrderEqualsFavorites();
-                sortType = MovieSortType.TOP_RATED;
+                setSortBySharedPreference(TOP_RATED);
                 fetchMovies();
                 item.setChecked(true);
                 return true;
             }
 
             case R.id.action_favorites: {
-                sortType = MovieSortType.FAVORITES;
+                setSortBySharedPreference(FAVORITES);
                 fetchMovies();
                 item.setChecked(true);
                 return true;
@@ -238,13 +255,15 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void startLoaderIfSortOrderEqualsFavorites() {
-        if (sortType.equals(MovieSortType.FAVORITES)) {
+        String sortType = getSortBySharedPreference();
+        if (sortType.equals(FAVORITES)) {
             getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
         }
     }
 
     private void stopLoaderIfSortOrderEqualsFavorites() {
-        if (sortType.equals(MovieSortType.FAVORITES)) {
+        String sortType = getSortBySharedPreference();
+        if (sortType.equals(FAVORITES)) {
             getSupportLoaderManager().destroyLoader(ID_FAVORITE_MOVIES_LOADER);
         }
     }
@@ -278,5 +297,17 @@ public class MainActivity extends AppCompatActivity
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         moviesAdapter.setMovieList((Cursor)null);
         updateLayout();
+    }
+
+    private @sortType String getSortBySharedPreference() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        return prefs.getString(getString(R.string.sort_by_key), MOST_POPULAR);
+    }
+
+    private void setSortBySharedPreference(@sortType String sortBy) {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString(getString(R.string.sort_by_key), sortBy);
+        editor.apply();
     }
 }

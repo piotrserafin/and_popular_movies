@@ -15,4 +15,6 @@
     <string name="share">Share</string>
     <string name="empty_favorites">Empty Favorites</string>
     <string name="no_connection">Possible connection lost</string>
+
+    <string name="sort_by_key">SORT_BY_KEY</string>
 </resources>
