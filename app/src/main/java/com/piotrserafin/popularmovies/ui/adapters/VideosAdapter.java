@@ -18,7 +18,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosAdap
 
     private final Context context;
     final private VideosAdapterOnClickHandler clickHandler;
-    private List<Video> results;
+    private ArrayList<Video> results;
 
     public interface VideosAdapterOnClickHandler {
         void onClick(Video video);
@@ -52,7 +52,7 @@ public class VideosAdapter extends RecyclerView.Adapter<VideosAdapter.VideosAdap
         notifyDataSetChanged();
     }
 
-    public List<Video> getResults() {
+    public ArrayList<Video> getResults() {
         return results;
     }
 

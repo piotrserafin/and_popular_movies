@@ -37,6 +37,7 @@ import com.piotrserafin.popularmovies.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -50,6 +51,10 @@ public class DetailsActivity extends AppCompatActivity
         implements VideosAdapter.VideosAdapterOnClickHandler {
 
     public static final String TAG = DetailsActivity.class.getSimpleName();
+
+    public static final String MOVIE = "MOVIE";
+    public static final String DETAIL_VIDEOS = "DETAIL_VIDEOS";
+    public static final String DETAIL_REVIEWS = "DETAIL_REVIEWS";
 
     private Movie movie;
 
@@ -110,25 +115,45 @@ public class DetailsActivity extends AppCompatActivity
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.details_acitvity_name);
 
-        Intent intent = getIntent();
-        Movie parcelableMovie = intent.getParcelableExtra("Movie");
+        if (savedInstanceState != null && savedInstanceState.containsKey(MOVIE)) {
 
-        movie = new Movie(
-                parcelableMovie.getId(),
-                parcelableMovie.getTitle(),
-                parcelableMovie.getPosterPath(),
-                parcelableMovie.getBackdropPath(),
-                parcelableMovie.getVoteAverage(),
-                parcelableMovie.getReleaseDate(),
-                parcelableMovie.getOverview());
+            movie = savedInstanceState.getParcelable(MOVIE);
+
+        } else {
+
+            Intent intent = getIntent();
+            Movie parcelableMovie = intent.getParcelableExtra(MOVIE);
+
+            movie = new Movie(
+                    parcelableMovie.getId(),
+                    parcelableMovie.getTitle(),
+                    parcelableMovie.getPosterPath(),
+                    parcelableMovie.getBackdropPath(),
+                    parcelableMovie.getVoteAverage(),
+                    parcelableMovie.getReleaseDate(),
+                    parcelableMovie.getOverview());
+
+        }
 
         populateUi();
         createVideosList();
         createReviewsList();
 
         //TODO: Good place to use RxJava to chain multiple Retrofit requests
-        fetchVideos();
-        fetchReviews();
+        if (savedInstanceState != null && savedInstanceState.containsKey(DETAIL_VIDEOS)) {
+            List<Video> videos = savedInstanceState.getParcelableArrayList(DETAIL_VIDEOS);
+            videosAdapter.setVideosList(videos);
+        } else {
+            fetchVideos();
+        }
+
+        // Fetch reviews only if savedInstanceState == null
+        if (savedInstanceState != null && savedInstanceState.containsKey(DETAIL_REVIEWS)) {
+            List<Review> reviews = savedInstanceState.getParcelableArrayList(DETAIL_REVIEWS);
+            reviewsAdapter.setReviewsList(reviews);
+        } else {
+            fetchReviews();
+        }
     }
 
     private void checkIfFavorite() {
@@ -172,6 +197,25 @@ public class DetailsActivity extends AppCompatActivity
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (movie != null) {
+            outState.putParcelable(MOVIE, movie);
+        }
+
+        ArrayList<Video> videos = videosAdapter.getResults();
+        if (videos != null && !videos.isEmpty()) {
+            outState.putParcelableArrayList(DETAIL_VIDEOS, videos);
+        }
+
+        ArrayList<Review> reviews = reviewsAdapter.getResults();
+        if (reviews != null && !reviews.isEmpty()) {
+            outState.putParcelableArrayList(DETAIL_REVIEWS, reviews);
+        }
     }
 
     private void toggleFavorite() {

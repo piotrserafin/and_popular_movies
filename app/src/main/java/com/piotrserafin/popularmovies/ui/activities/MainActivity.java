@@ -43,8 +43,11 @@ public class MainActivity extends AppCompatActivity
     //The answer to the ultimate question of life, the universe and everything
     private static final int ID_FAVORITE_MOVIES_LOADER = 42;
 
+    public static final String MOVIES = "MOVIES";
+    public static final String SORT_BY = "SORT_BY";
+
     private MoviesAdapter moviesAdapter;
-    private MovieSortType sortType = MovieSortType.MOST_POPULAR;
+    private MovieSortType sortType;
     private final CommandFactory commandFactory = CommandFactory.getInstance();
 
     @BindView(R.id.movies_grid)
@@ -70,8 +73,20 @@ public class MainActivity extends AppCompatActivity
         commandFactory.addCommand(MovieSortType.TOP_RATED, this::fetchTopRatedMovies);
         commandFactory.addCommand(MovieSortType.FAVORITES, this::fetchFavorites);
 
-        fetchMovies();
+        if(savedInstanceState != null) {
+            sortType = savedInstanceState.getParcelable(SORT_BY);
 
+            if (sortType.equals(MovieSortType.FAVORITES)) {
+                getSupportLoaderManager().initLoader(ID_FAVORITE_MOVIES_LOADER, null, this);
+            } else {
+                List<Movie> movies = savedInstanceState.getParcelableArrayList(MOVIES);
+                moviesAdapter.setMovieList(movies);
+                updateLayout();
+            }
+        } else {
+            sortType = MovieSortType.MOST_POPULAR;
+            fetchMovies();
+        }
     }
 
     private void fetchMovies() {
@@ -150,9 +165,23 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        ArrayList<Movie> movies = moviesAdapter.getResults();
+        if (movies != null && !movies.isEmpty()) {
+            outState.putParcelableArrayList(MOVIES, movies);
+        }
+        outState.putParcelable(SORT_BY, sortType);
+
+        if (!sortType.equals(MovieSortType.FAVORITES)) {
+            getSupportLoaderManager().destroyLoader(ID_FAVORITE_MOVIES_LOADER);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onClick(Movie movie) {
         Intent movieDetailsIntent = new Intent(MainActivity.this, DetailsActivity.class);
-        movieDetailsIntent.putExtra("Movie", movie);
+        movieDetailsIntent.putExtra(DetailsActivity.MOVIE, movie);
         startActivity(movieDetailsIntent);
     }
 

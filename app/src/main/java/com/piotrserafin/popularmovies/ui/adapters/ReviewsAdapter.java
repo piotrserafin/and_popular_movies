@@ -20,7 +20,7 @@ import butterknife.ButterKnife;
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsAdapterViewHolder> {
 
     private final Context context;
-    private List<Review> results;
+    private ArrayList<Review> results;
 
     public ReviewsAdapter(Context context) {
         this.context = context;
@@ -49,6 +49,10 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
         this.results = new ArrayList<>();
         this.results.addAll(results);
         notifyDataSetChanged();
+    }
+
+    public ArrayList<Review> getResults() {
+        return results;
     }
 
     class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder {

@@ -1,8 +1,48 @@
 package com.piotrserafin.popularmovies.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
-public class Video {
+public class Video implements Parcelable {
+
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
+        public Video createFromParcel(Parcel in) {
+            return new Video(in);
+        }
+
+        public Video[] newArray(int size) {
+            return new Video[size];
+        }
+    };
+
+    Video(Parcel in) {
+        this.id = in.readString();
+        this.key = in.readString();
+        this.name = in.readString();
+        this.type = in.readString();
+    }
+
+    public Video(String id, String key, String name, String type) {
+        this.id = id;
+        this.key = key;
+        this.name = name;
+        this.type = type;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(key);
+        dest.writeString(name);
+        dest.writeString(type);
+    }
 
     @SerializedName("id")
     private String id;
